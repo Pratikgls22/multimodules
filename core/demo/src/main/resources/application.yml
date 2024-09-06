@@ -1,0 +1,23 @@
+spring:
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://192.168.10.131:3306/react-security?createDatabaseIfNotExist=true&useSSL=false
+    username: root
+    password: root@root
+
+  jpa:
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQL8Dialect
+        format_sql: true
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+
+
+server:
+  port: 9093
+
+logging:
+  level:
+    web: debug
