@@ -42,7 +42,7 @@
         <dependency>
             <groupId>com.ecommerce</groupId>
             <artifactId>security</artifactId>
-            <version>${project.version}</version>
+            <version>0.0.1-SNAPSHOT</version>
         </dependency>
 
 

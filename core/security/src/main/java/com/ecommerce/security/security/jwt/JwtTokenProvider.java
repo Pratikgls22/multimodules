@@ -1,6 +1,7 @@
 package com.ecommerce.security.security.jwt;
 
 
+import com.ecommerce.utility.enums.CommonEnum;
 import com.ecommerce.utility.enums.ExceptionEnum;
 import com.ecommerce.utility.enums.JwtExceptionEnum;
 import com.ecommerce.utility.exception.CustomException;
@@ -22,34 +23,29 @@ import org.springframework.stereotype.Component;
 
 import javax.crypto.KeyGenerator;
 import javax.crypto.SecretKey;
+import java.nio.charset.StandardCharsets;
 import java.security.NoSuchAlgorithmException;
 import java.text.ParseException;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static com.ecommerce.utility.enums.CommonEnum.USER_ROLE;
+
 @Component
 @Slf4j
 public class JwtTokenProvider {
 
-    private static final String AUTHORIZATION = "Authorization";
-    private static final String USER_ID = "userId";
-    private static final String USER_ROLE = "userRole";
-    private static final String USER_NAME = "userName";
-
     private final JWSSigner jwsSigner;
     private final JWSVerifier jwsVerifier;
 
-    public JwtTokenProvider() throws JOSEException, NoSuchAlgorithmException {
-        KeyGenerator keyGenerator = KeyGenerator.getInstance("HmacSHA256");
-        keyGenerator.init(256);
-        SecretKey secretKey = keyGenerator.generateKey();
-        this.jwsSigner = new MACSigner(secretKey);
-        this.jwsVerifier = new MACVerifier(secretKey);
+    public JwtTokenProvider() throws JOSEException {
+        this.jwsSigner = new MACSigner(CommonEnum.SECRETKEY.getValue().getBytes(StandardCharsets.UTF_8));
+        this.jwsVerifier = new MACVerifier(CommonEnum.SECRETKEY.getValue().getBytes(StandardCharsets.UTF_8));
     }
 
     //  This method is used to resolve and get JWT token from HTTP request's header;
     public String resolveToken(HttpServletRequest request) {
-        String bearerToken = request.getHeader(AUTHORIZATION);
+        String bearerToken = request.getHeader(CommonEnum.AUTHORIZATION.getValue());
         if (bearerToken != null && bearerToken.startsWith("Bearer ")) {
             return bearerToken.substring(7);
         }
@@ -62,8 +58,6 @@ public class JwtTokenProvider {
         return this.isTokenExpired(token);
     }
 
-
-    //  this method will authenticate the token with UserDetails which we have to done through a CustomUserDetails
     public Authentication getAuthentication(String token) {
         List<GrantedAuthority> grantedAuthorities = new ArrayList<>();
         grantedAuthorities.add(new SimpleGrantedAuthority(getUserRole(token)));
@@ -76,11 +70,11 @@ public class JwtTokenProvider {
     }
 
     public Long getUserIdFromToken(String token) {
-        return (Long) this.parseJwtAndExtractClaims(token).getClaim(USER_ID);
+        return (Long) this.parseJwtAndExtractClaims(token).getClaim(CommonEnum.USER_ID.getValue());
     }
 
     public String getUserRole(String token) {
-        return (String) this.parseJwtAndExtractClaims(token).getClaim(USER_ROLE);
+        return (String) this.parseJwtAndExtractClaims(token).getClaim(USER_ROLE.getValue());
     }
 
     private Boolean isTokenExpired(String token) {
@@ -94,8 +88,7 @@ public class JwtTokenProvider {
         return this.parseJwtAndExtractClaims(token).getExpirationTime();
     }
 
-
-    //  in this method we break down JWT token and verify their signatures and getting the claims through claims we have header,payload,sign;
+    //  In this method we break down JWT token and verify their signatures and getting the claims through claims we have header,payload,sign;
     private JWTClaimsSet parseJwtAndExtractClaims(String jwtToken) {
         try {
             SignedJWT signedJWT = SignedJWT.parse(jwtToken);
@@ -142,7 +135,7 @@ public class JwtTokenProvider {
                     .orElseGet(Collections::emptyMap)
                     .entrySet()
                     .stream()
-                    .filter(foundEntry -> List.of(USER_ID, USER_ROLE).contains(foundEntry.getKey()))
+                    .filter(foundEntry -> List.of(CommonEnum.USER_ID.getValue(), USER_ROLE.getValue()).contains(foundEntry.getKey()))
                     .filter(foundEntry -> Optional.ofNullable(foundEntry.getValue()).isPresent() && Optional.ofNullable(foundEntry.getKey()).isPresent())
                     .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
 
@@ -152,11 +145,10 @@ public class JwtTokenProvider {
         }
     }
 
-    public String createToken(String username, Long userId, String userRole) {
+    public String createToken(String username, String userRole) {
         Map<String, Object> claims = new HashMap<>();
-        claims.put(USER_NAME, username);
-        claims.put(USER_ID, userId);
-        claims.put(USER_ROLE, userRole);
+        claims.put(CommonEnum.USER_NAME.getValue(), username);
+        claims.put(CommonEnum.USER_ROLE.getValue(), userRole);
         // new with nimbus jose jwt
         return this.generateSignedJwt(username, claims).serialize();
     }

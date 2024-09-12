@@ -1,9 +1,9 @@
 spring:
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://192.168.10.131:3306/react-security?createDatabaseIfNotExist=true&useSSL=false
+    url: jdbc:mysql://localhost:3306/react-security?createDatabaseIfNotExist=true&useSSL=false
     username: root
-    password: root@root
+    password: root
 
   jpa:
     properties:

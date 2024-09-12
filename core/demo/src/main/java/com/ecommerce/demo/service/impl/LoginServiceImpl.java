@@ -26,6 +26,7 @@ import java.util.Optional;
 @Slf4j
 @Service
 public class LoginServiceImpl implements LoginService {
+
     private final JwtTokenProvider jwtTokenProvider;
     private final AuthenticationManager authenticationManager;
     private final UserRepository userRepository;
@@ -35,21 +36,32 @@ public class LoginServiceImpl implements LoginService {
     @Override
     public ResponseTokenDTO getToken(LoginRequestDTO loginRequestDTO) {
 
-
+//        authenticating user credentials
         this.authenticate(loginRequestDTO.getEmail(), loginRequestDTO.getPassword());
 
+//        get the user from the database
         var user = this.getUser(loginRequestDTO.getEmail());
 
+//        comparing the user password and hashed password stored in database
         if (this.passwordEncoder.matches(loginRequestDTO.getPassword(), user.getPassword())) {
+//            generating Token
             return getTokenResponse(user);
         } else {
+            log.info("Password Not Match : {}", loginRequestDTO.getPassword());
             throw new CustomException(ExceptionEnum.INCORRECT_USERNAME_OR_PASSWORD.getValue(), HttpStatus.UNAUTHORIZED);
         }
     }
 
+
+    /**
+     * @param email <>This method is used to get user from UserRepository</>
+     * @return User
+     */
     private UserEntity getUser(String email) {
-        return this.userRepository.findByEmail(email).orElseThrow(() -> new CustomException(JwtExceptionEnum.INCORRECT_USERNAME_OR_PASSWORD.getValue(), HttpStatus.UNAUTHORIZED));
+        return this.userRepository.findByEmail(email)
+                .orElseThrow(() -> new CustomException(JwtExceptionEnum.INCORRECT_USERNAME_OR_PASSWORD.getValue(), HttpStatus.UNAUTHORIZED));
     }
+
 
     private void authenticate(String email, String password) {
         try {
@@ -72,7 +84,7 @@ public class LoginServiceImpl implements LoginService {
         }
 
         try {
-            return new ResponseTokenDTO(jwtTokenProvider.createToken(userEntity.getEmail(), userEntity.getId(), userRole), userRole, userEntity.getId(), userEntity.getUserName());
+            return new ResponseTokenDTO(jwtTokenProvider.createToken(userEntity.getEmail(), userRole), userRole, userEntity.getId(), userEntity.getUserName());
         } catch (Exception e) {
             log.info("Exception Catch In Login Service::::");
             throw new CustomException("Error While Creating Token", HttpStatus.INTERNAL_SERVER_ERROR);

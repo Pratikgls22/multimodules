@@ -1,10 +1,10 @@
 package com.ecommerce.security.service.impl;
 
+import com.ecommerce.security.service.UserAuthenticationService;
 import com.ecommerce.entity.entity.UserEntity;
 import com.ecommerce.entity.entity.UserRoleMappingEntity;
 import com.ecommerce.repository.repository.UserRepository;
 import com.ecommerce.repository.repository.UserRoleMappingRepository;
-import com.ecommerce.security.service.UserAuthenticationService;
 import com.ecommerce.utility.enums.ExceptionEnum;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -29,6 +29,8 @@ public class UserAuthenticationServiceImpl implements UserAuthenticationService 
     public Optional<UserDetails> findUserByEmail(String userName) {
 
         UserEntity userEntity = this.userRepository.findByEmail(userName).orElseThrow(() -> new RuntimeException(ExceptionEnum.USER_NOT_FOUND.getValue()));
+
+        System.out.println("userEntity UserAuthenticationServiceImpl=================== " + userEntity);
 
         List<GrantedAuthority> grantedAuthorities = new ArrayList<>();
 
