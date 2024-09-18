@@ -6,21 +6,19 @@ import lombok.*;
 @Entity
 @Getter
 @Setter
-@ToString
 @Builder
-@NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "color", indexes = {
-        @Index(name = "index_color",columnList = "color",unique = true),
+@NoArgsConstructor
+@Table(name = "network", indexes = {
+        @Index(name = "index_network",columnList = "network_type",unique = true),
 })
-public class ColorEntity extends BaseEntity {
-
+public class NetworkEntity extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "color")
-    private String color;
+    @Column(name = "network_type")
+    private String networkType;
 
     @ManyToOne
     @JoinColumn(name = "main_category_id")

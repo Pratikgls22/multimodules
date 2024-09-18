@@ -4,17 +4,21 @@ import com.ecommerce.entity.entity.*;
 import lombok.*;
 
 @Getter
+@Setter
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@Setter
 public class ExcelRequestDto {
 
-    private CategoryEntity categoryEntity;
-    private CategoryEntity subCategoryEntity;
+    private MainCategoryEntity mainCategoryEntity;
     private ModelEntity modelEntity;
     private ColorEntity colorEntity;
     private RamEntity ramEntity;
     private InternalStorageEntity internalStorageEntity;
-    private PriceEntity priceEntity;
+    private BrandEntity brandEntity;
+    private SimSlotEntity simSlotEntity;
+    private BatteryCapacityEntity batteryCapacityEntity;
+    private ScreenSizeEntity screenSizeEntity;
+    private ProcessorEntity processorEntity;
+    private NetworkEntity networkEntity;
 }

@@ -9,16 +9,19 @@ import lombok.*;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
+@Table(name = "internal_storage", indexes = {
+        @Index(name = "index_internal_storage",columnList = "internal_storage",unique = true),
+})
 public class InternalStorageEntity extends BaseEntity{
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "Internal_Storage")
+    @Column(name = "internal_storage")
     private String internalStorage;
 
     @ManyToOne
-    @JoinColumn(name = "category_Id")
-    private CategoryEntity categoryEntity;
+    @JoinColumn(name = "main_category_id")
+    private MainCategoryEntity mainCategoryEntity;
 }

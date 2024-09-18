@@ -10,17 +10,20 @@ import lombok.*;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
+@Table(name = "ram", indexes = {
+        @Index(name = "index_ram",columnList = "ram",unique = true),
+})
 public class RamEntity extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "Ram")
+    @Column(name = "ram")
     private String ram;
 
     @ManyToOne
-    @JoinColumn(name = "category_Id")
-    private CategoryEntity categoryEntity;
+    @JoinColumn(name = "main_category_id")
+    private MainCategoryEntity mainCategoryEntity;
 }
 

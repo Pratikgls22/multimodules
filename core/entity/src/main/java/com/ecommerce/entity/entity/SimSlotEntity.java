@@ -6,21 +6,19 @@ import lombok.*;
 @Entity
 @Getter
 @Setter
-@ToString
-@Builder
-@NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "color", indexes = {
-        @Index(name = "index_color",columnList = "color",unique = true),
+@NoArgsConstructor
+@Builder
+@Table(name = "sim_slot", indexes = {
+        @Index(name = "index_sim_slot",columnList = "sim_slot_type",unique = true),
 })
-public class ColorEntity extends BaseEntity {
-
+public class SimSlotEntity extends BaseEntity{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "color")
-    private String color;
+    @Column(name = "sim_slot_type")
+    private String simSlotType;
 
     @ManyToOne
     @JoinColumn(name = "main_category_id")

@@ -43,11 +43,12 @@ public class BeanFactory {
      * @param : HttpServletRequest same object from claims()
      * */
     public TokenClaims tokenClaims(HttpServletRequest request) {
-        return new TokenClaims(
+        TokenClaims tokenClaims = new TokenClaims(
                 this.jwtTokenProvider.resolveToken(request),
                 this.jwtTokenProvider.getUsername(this.jwtTokenProvider.resolveToken(request)),
                 this.jwtTokenProvider.getUserIdFromToken(this.jwtTokenProvider.resolveToken(request)),
                 this.jwtTokenProvider.getUserRole(this.jwtTokenProvider.resolveToken(request)));
+        return tokenClaims;
     }
 
 

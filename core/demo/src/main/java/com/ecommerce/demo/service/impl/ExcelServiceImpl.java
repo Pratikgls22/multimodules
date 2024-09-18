@@ -1,5 +1,6 @@
 package com.ecommerce.demo.service.impl;
 
+
 import com.ecommerce.demo.service.ExcelService;
 import com.ecommerce.demo.utill.Utilities;
 import com.ecommerce.entity.entity.*;
@@ -15,9 +16,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -25,198 +26,275 @@ import java.util.Optional;
 public class ExcelServiceImpl implements ExcelService {
 
     private final ProductRepository productRepository;
-    private final PriceRepository priceRepository;
-    private final CategoryRepository categoryRepository;
+    private final MainCategoryRepository categoryRepository;
     private final ModelRepository modelRepository;
     private final RamRepository ramRepository;
     private final ColorRepository colorRepository;
     private final InternalStorageRepository internalStorageRepository;
     private final Utilities utilities;
+    private final BrandRepository brandRepository;
+    private final NetworkRepository networkRepository;
+    private final SimSlotRepository simSlotRepository;
+    private final ScreenSizeRepository screenSizeRepository;
+    private final BatteryCapacityRepository batteryCapacityRepository;
+    private final ProcessorRepository processorRepository;
 
+    /**
+     * @param multipartFile <>this method read excel and store the data</>
+     * @throws IOException
+     */
     @Override
     public void readFileAndSave(MultipartFile multipartFile) throws IOException {
 
         Workbook workbook = new XSSFWorkbook(multipartFile.getInputStream());
         Sheet sheet = workbook.getSheetAt(0);
 
-
-        Map<String, Long> categoryMap = new HashMap<>();
-        Map<String, Long> modelMap = new HashMap<>();
-        Map<String, Long> colorMap = new HashMap<>();
-        Map<String, Long> ramMap = new HashMap<>();
-        Map<String, Long> internalStorageMap = new HashMap<>();
-
-
         UserEntity currentUser = utilities.currentUser();
 
-        int lastRow = sheet.getLastRowNum();
         for (Row row : sheet) {
-            System.out.println(row.getRowNum());
 //            skip header
-            if (row.getRowNum() != 0 ) {
-
+            if (row.getRowNum() != 0) {
                 String category = row.getCell(0).getStringCellValue();
-                String subCategory = row.getCell(1).getStringCellValue();
+                String brand = row.getCell(1).getStringCellValue();
                 String model = row.getCell(2).getStringCellValue();
-                String ram = row.getCell(3).getStringCellValue();
-                String internalStorage = row.getCell(4).getStringCellValue();
-                String color = row.getCell(5).getStringCellValue();
-                int price =(int) row.getCell(6).getNumericCellValue();
+                String colorNames = row.getCell(3).getStringCellValue();
+                String rams = row.getCell(4).getStringCellValue();
+                String internalStorages = row.getCell(5).getStringCellValue();
+                String network = row.getCell(6).getStringCellValue();
+                String simSlot = row.getCell(7).getStringCellValue();
+                String screenSize = row.getCell(8).getStringCellValue();
+                String battery = row.getCell(9).getStringCellValue();
+                String processor = row.getCell(10).getStringCellValue();
 
-                var categoryEntity = this.categoryRepository.findByCategoryName(category)
-                        .orElseGet(() ->
-                            saveOrCreateCategory(category,currentUser));
+                // find in category master if not then save
+                var categoryEntity = this.categoryRepository.findByCategoryName(category).orElseGet(
+                        () -> saveOrCreateCategoryEntity(category, currentUser));
 
-                Optional<CategoryEntity> subCategoryEntity = this.categoryRepository.findByCategoryName(subCategory);
-                System.out.println("subCategoryEntity = " + subCategoryEntity);
+                var brandEntity = this.brandRepository.findByBrandName(brand).orElseGet(
+                        () -> saveOrCreateBrandEntity(brand, currentUser, categoryEntity));
 
-                var modelEntity = this.modelRepository.findByModalName(model)
-                        .orElseGet(() -> saveOrCreateModel(model,categoryEntity,currentUser));
+                var modelEntity = this.modelRepository.findByModalName(model).orElseGet(
+                        () -> saveOrCreateModelEntity(model, categoryEntity, currentUser));
 
-                var colorEntity = this.colorRepository.findByColor(color)
-                        .orElseGet(() -> saveOrCreateColor(color,categoryEntity,currentUser));
+                var colorEntityList = saveOrCreateColorEntity(colorNames, currentUser, categoryEntity);
 
-                var ramEntity = this.ramRepository.findByRam(ram)
-                        .orElseGet(() -> saveOrCreateRam(ram,categoryEntity,currentUser));
+                var ramEntityList = saveOrCreateRamEntity(rams, currentUser, categoryEntity);
 
-                var internalStorageEntity = this.internalStorageRepository.findByInternalStorage(internalStorage)
-                        .orElseGet(() -> saveOrCreateInternalStorage(internalStorage,categoryEntity,currentUser));
+                var internalStorageList = saveOrCreateInternalStorageEntities(internalStorages, currentUser, categoryEntity);
 
-                var priceEntity = this.priceRepository.findByAmount(price)
-                        .orElseGet(() -> saveOrCreatePrice(price,currentUser));
+                var networkEntity = this.networkRepository.findByNetworkType(network).orElseGet(
+                        () -> saveOrCreateNetworkEntity(network, categoryEntity, currentUser));
 
-                ProductEntity productEntity = ProductEntity.builder()
-                        .categoryEntity(categoryEntity)
-                        .subCategoryEntity(categoryEntity)
-                        .modelEntity(modelEntity)
-                        .colorEntity(colorEntity)
-                        .ramEntity(ramEntity)
-                        .internalStorageEntity(internalStorageEntity)
-                        .priceEntity(priceEntity)
-                        .build();
-                productEntity.setCreatedBy(currentUser);
-                productEntity.setUpdatedBy(currentUser);
+                var simSlotEntity = this.simSlotRepository.findBySimSlotType(simSlot).orElseGet(
+                        () -> saveOrCreateSimSlotTypeEntity(simSlot, categoryEntity, currentUser));
 
-                ExcelRequestDto excelRequestDto = ExcelRequestDto.builder()
-                        .categoryEntity(categoryEntity)
-                        .subCategoryEntity(categoryEntity)
-                        .modelEntity(modelEntity)
-                        .colorEntity(colorEntity)
-                        .ramEntity(ramEntity)
-                        .internalStorageEntity(internalStorageEntity)
-                        .priceEntity(priceEntity)
-                        .build();
-                var excelRequestDto1 = this.productRepository.findByAttributes(excelRequestDto)
-                        .orElseGet(() -> saveOrCreateProduct(productEntity));
+                var screenSizeEntity = this.screenSizeRepository.findByScreenSize(screenSize).orElseGet(
+                        () -> saveOrCreateScreenSizeEntity(screenSize, categoryEntity, currentUser));
+
+                var batteryEntity = this.batteryCapacityRepository.findByBatteryCapacity(battery).orElseGet(
+                        () -> saveOrCreateBattery(battery, categoryEntity, currentUser));
+
+                var processorEntity = this.processorRepository.findByProcessorName(processor).orElseGet(
+                        () -> saveOrCreateProcessor(processor, categoryEntity, currentUser));
+
+
+                List<ProductEntity> productEntities = new ArrayList<>();
+
+                // Iterate over each color
+                for (ColorEntity colorEntity : colorEntityList) {
+                    // Iterate over each RAM value
+                    for (RamEntity ramEntity : ramEntityList) {
+                        // Iterate over each internal storage value
+                        for (InternalStorageEntity internalStorageEntity : internalStorageList) {
+                            // Create a new ProductEntity for each combination
+                            ProductEntity productEntity = new ProductEntity(categoryEntity, modelEntity, colorEntityList, ramEntityList, internalStorageList, brandEntity, simSlotEntity, batteryEntity, screenSizeEntity, processorEntity, networkEntity);
+                            productEntity.setColorEntity(colorEntity);              // Set color
+                            productEntity.setInternalStorageEntity(internalStorageEntity); // Set internal storage
+                            productEntity.setRamEntity(ramEntity);                  // Set RAM
+                            productEntity.setUpdatedBy(currentUser);
+                            productEntity.setCreatedBy(currentUser);
+                            productEntity.setMainCategoryEntity(categoryEntity);    // Set category
+                            productEntity.setModelEntity(modelEntity);              // Set model
+                            productEntity.setBrandEntity(brandEntity);               // Set brand
+                            productEntity.setSimSlotEntity(simSlotEntity);              // Set sim slot
+                            productEntity.setBatteryCapacity(batteryEntity);            // Set battery size
+                            productEntity.setScreenSizeEntity(screenSizeEntity);         // Set screen size
+                            productEntity.setProcessorEntity(processorEntity);          // set processor
+                            productEntity.setNetworkEntity(networkEntity);              // set network
+
+                            // Create a DTO to check if this product combination already exists
+                            ExcelRequestDto excelRequestDto = new ExcelRequestDto(categoryEntity,modelEntity,colorEntity,ramEntity,internalStorageEntity,brandEntity,simSlotEntity,batteryEntity,screenSizeEntity,processorEntity,networkEntity);
+
+                            // Check if the combination exists
+                            var entity = this.productRepository.findByAttributes(excelRequestDto);
+                            if (entity.isEmpty()) {
+                                // If the product combination does not exist, add to list for saving
+                                productEntities.add(productEntity);
+                            }
+                        }
+                    }
+                }
+
+// Save all new product combinations to the repository
+                productRepository.saveAll(productEntities);
 
             }
         }
-
     }
 
-    private ProductEntity saveOrCreateProduct(ProductEntity productEntity) {
-        return this.productRepository.save(productEntity);
+    private List<ColorEntity> saveOrCreateColorEntity(String colorNames, UserEntity currentUser, MainCategoryEntity categoryEntity) {
+        List<String> items = Arrays.asList(colorNames.split("\\s*,\\s*"));
+        List<ColorEntity> colorEntityList = new ArrayList<>();
+        List<ColorEntity> newColorEntityList = new ArrayList<>();
+        items.forEach(r -> {
+            var colorE = this.colorRepository.findByColor(r);
+            if (colorE.isPresent()) {
+                colorEntityList.add(colorE.get());
+            } else {
+                ColorEntity colorEntity = new ColorEntity();
+                colorEntity.setMainCategoryEntity(categoryEntity);
+                colorEntity.setCreatedBy(currentUser);
+                colorEntity.setUpdatedBy(currentUser);
+                colorEntity.setColor(r);
+                newColorEntityList.add(colorEntity);
+            }
+        });
+        if (newColorEntityList.isEmpty()){
+            return colorEntityList;
+        }
+        colorEntityList.addAll(this.colorRepository.saveAll(newColorEntityList));
+        return colorEntityList;
     }
 
-    private PriceEntity saveOrCreatePrice(int price, UserEntity currentUser) {
-        PriceEntity priceEntity = PriceEntity.builder()
-                .amount(price)
+    private List<RamEntity> saveOrCreateRamEntity(String ramNames, UserEntity currentUser, MainCategoryEntity categoryEntity) {
+        List<String> items = Arrays.asList(ramNames.split("\\s*,\\s*"));
+        List<RamEntity> ramEntityList = new ArrayList<>();
+        List<RamEntity> newRamEntityList = new ArrayList<>();
+        items.forEach(r -> {
+            var ramLists = this.ramRepository.findByRam(r);
+            if (ramLists.isPresent()) {
+                ramEntityList.add(ramLists.get());
+            } else {
+                RamEntity ramEntity = new RamEntity();
+                ramEntity.setMainCategoryEntity(categoryEntity);
+                ramEntity.setCreatedBy(currentUser);
+                ramEntity.setUpdatedBy(currentUser);
+                ramEntity.setRam(r);
+                newRamEntityList.add(ramEntity);
+            }
+        });
+        if (newRamEntityList.isEmpty()){
+            return ramEntityList;
+        }
+        ramEntityList.addAll(this.ramRepository.saveAll(newRamEntityList));
+        return ramEntityList;
+    }
+
+    private List<InternalStorageEntity> saveOrCreateInternalStorageEntities(String internalStorageNames, UserEntity currentUser, MainCategoryEntity categoryEntity) {
+        List<String> items = Arrays.asList(internalStorageNames.split("\\s*,\\s*"));
+        List<InternalStorageEntity> internalStorageEntities = new ArrayList<>();
+        List<InternalStorageEntity> newInternalStorageEntities = new ArrayList<>();
+        items.forEach(r -> {
+            var internalStorageLists = this.internalStorageRepository.findByInternalStorage(r);
+            if (internalStorageLists.isEmpty()) {
+                InternalStorageEntity internalStorageEntity = new InternalStorageEntity();
+                internalStorageEntity.setMainCategoryEntity(categoryEntity);
+                internalStorageEntity.setCreatedBy(currentUser);
+                internalStorageEntity.setUpdatedBy(currentUser);
+                internalStorageEntity.setInternalStorage(r);
+                newInternalStorageEntities.add(internalStorageEntity);
+            } else {
+                internalStorageEntities.add(internalStorageLists.get());
+            }
+        });
+        if (newInternalStorageEntities.isEmpty()){
+            return internalStorageEntities;
+        }
+        internalStorageEntities.addAll(this.internalStorageRepository.saveAll(newInternalStorageEntities));
+        return internalStorageEntities;
+    }
+
+
+    private ProcessorEntity saveOrCreateProcessor(String processor, MainCategoryEntity categoryEntity, UserEntity currentUser) {
+        ProcessorEntity processorEntity = ProcessorEntity.builder()
+                .processorName(processor)
+                .mainCategoryEntity(categoryEntity)
                 .build();
-        priceEntity.setCreatedBy(currentUser);
-        priceEntity.setUpdatedBy(currentUser);
-        return this.priceRepository.save(priceEntity);
+        processorEntity.setCreatedBy(currentUser);
+        processorEntity.setUpdatedBy(currentUser);
+        return this.processorRepository.save(processorEntity);
     }
 
-    private InternalStorageEntity saveOrCreateInternalStorage(String internalStorage, CategoryEntity categoryEntity, UserEntity currentUser) {
-        InternalStorageEntity internalStorageEntity = InternalStorageEntity.builder()
-                .internalStorage(internalStorage)
-                .categoryEntity(categoryEntity)
+    private BatteryCapacityEntity saveOrCreateBattery(String battery, MainCategoryEntity categoryEntity, UserEntity currentUser) {
+        BatteryCapacityEntity batteryCapacityEntity = BatteryCapacityEntity.builder()
+                .batteryCapacity(battery)
+                .mainCategoryEntity(categoryEntity)
                 .build();
-        internalStorageEntity.setCreatedBy(currentUser);
-        internalStorageEntity.setUpdatedBy(currentUser);
-        return this.internalStorageRepository.save(internalStorageEntity);
+        batteryCapacityEntity.setCreatedBy(currentUser);
+        batteryCapacityEntity.setUpdatedBy(currentUser);
+        return this.batteryCapacityRepository.save(batteryCapacityEntity);
     }
 
-    private RamEntity saveOrCreateRam(String ram, CategoryEntity categoryEntity, UserEntity currentUser) {
-        RamEntity ramEntity = RamEntity.builder()
-                .ram(ram)
-                .categoryEntity(categoryEntity)
+    private ScreenSizeEntity saveOrCreateScreenSizeEntity(String screenSize, MainCategoryEntity categoryEntity, UserEntity currentUser) {
+        ScreenSizeEntity screenSizeEntity = ScreenSizeEntity.builder()
+                .screenSize(screenSize)
+                .mainCategoryEntity(categoryEntity)
                 .build();
-        ramEntity.setCreatedBy(currentUser);
-        ramEntity.setUpdatedBy(currentUser);
-        return this.ramRepository.save(ramEntity);
+        screenSizeEntity.setCreatedBy(currentUser);
+        screenSizeEntity.setUpdatedBy(currentUser);
+        return this.screenSizeRepository.save(screenSizeEntity);
     }
 
-    private ColorEntity saveOrCreateColor(String color, CategoryEntity categoryEntity, UserEntity currentUser) {
-        ColorEntity colorEntity = ColorEntity.builder()
-                .color(color)
-                .categoryEntity(categoryEntity)
+    private SimSlotEntity saveOrCreateSimSlotTypeEntity(String simSlot, MainCategoryEntity categoryEntity, UserEntity currentUser) {
+        SimSlotEntity simSlotEntity = SimSlotEntity.builder()
+                .simSlotType(simSlot)
+                .mainCategoryEntity(categoryEntity)
                 .build();
-        colorEntity.setCreatedBy(currentUser);
-        colorEntity.setUpdatedBy(currentUser);
-        return this.colorRepository.save(colorEntity);
+        simSlotEntity.setCreatedBy(currentUser);
+        simSlotEntity.setUpdatedBy(currentUser);
+        return this.simSlotRepository.save(simSlotEntity);
+
     }
 
-    private ModelEntity saveOrCreateModel(String model, CategoryEntity categoryEntity, UserEntity currentUser) {
-        ModelEntity modelEntity = ModelEntity.builder()
-                .modalName(model)
-                .categoryEntity(categoryEntity)
+    private NetworkEntity saveOrCreateNetworkEntity(String network, MainCategoryEntity categoryEntity, UserEntity currentUser) {
+        NetworkEntity networkEntity = NetworkEntity.builder()
+                .networkType(network)
+                .mainCategoryEntity(categoryEntity)
                 .build();
-        modelEntity.setCreatedBy(currentUser);
-        modelEntity.setUpdatedBy(currentUser);
-        return this.modelRepository.save(modelEntity);
+        networkEntity.setCreatedBy(currentUser);
+        networkEntity.setUpdatedBy(currentUser);
+        return this.networkRepository.save(networkEntity);
     }
 
-    private CategoryEntity saveOrCreateCategory(String category, UserEntity currentUser) {
-        CategoryEntity categoryEntity = CategoryEntity.builder()
-                .categoryName(category)
+    private BrandEntity saveOrCreateBrandEntity(String brand, UserEntity currentUser, MainCategoryEntity categoryEntity) {
+        BrandEntity brandEntity = BrandEntity.builder()
+                .brandName(brand)
+                .mainCategoryEntity(categoryEntity)
+                .build();
+        brandEntity.setCreatedBy(currentUser);
+        brandEntity.setUpdatedBy(currentUser);
+        return this.brandRepository.save(brandEntity);
+    }
+
+    private MainCategoryEntity saveOrCreateCategoryEntity(String categoryName, UserEntity currentUser) {
+        MainCategoryEntity categoryEntity = MainCategoryEntity.builder()
+                .categoryName(categoryName)
                 .build();
         categoryEntity.setCreatedBy(currentUser);
         categoryEntity.setUpdatedBy(currentUser);
+        // save into database
         return this.categoryRepository.save(categoryEntity);
     }
 
-    private Long getOrCreateInternalStorage(String internalStorage, Long categoryId, Map<String, Long> internalStorageMap) {
-        return internalStorageMap.computeIfAbsent(internalStorage, key -> {
-            InternalStorageEntity internalStorageEntity = new InternalStorageEntity();
-            internalStorageEntity.setInternalStorage(internalStorage);
-            internalStorageEntity.setCategoryEntity(this.categoryRepository.findById(categoryId).orElse(null));
-            return this.internalStorageRepository.save(internalStorageEntity).getId();
-        });
+    private ModelEntity saveOrCreateModelEntity(String model, MainCategoryEntity categoryEntity, UserEntity currentUser) {
+        ModelEntity modelEntity = ModelEntity.builder()
+                .modalName(model)
+                .mainCategoryEntity(categoryEntity).build();
+        modelEntity.setCreatedBy(currentUser);
+        modelEntity.setUpdatedBy(currentUser);
+        return this.modelRepository.save(modelEntity);
+
+
     }
 
-    private Long getOrCreateRam(String ram, Long categoryId, Map<String, Long> ramMap) {
-        return ramMap.computeIfAbsent(ram, key -> {
-            RamEntity ramEntity = new RamEntity();
-            ramEntity.setRam(ram);
-            ramEntity.setCategoryEntity(this.categoryRepository.findById(categoryId).orElse(null));
-            return this.ramRepository.save(ramEntity).getId();
-        });
-    }
-
-    private Long getOrCreateColor(String color, Long categoryId, Map<String, Long> colorMap) {
-        return colorMap.computeIfAbsent(color, key -> {
-            ColorEntity colorEntity = new ColorEntity();
-            colorEntity.setColor(color);
-            colorEntity.setCategoryEntity(this.categoryRepository.findById(categoryId).orElse(null));
-            return this.colorRepository.save(colorEntity).getId();
-        });
-    }
-
-    private Long getOrCreateModel(String model, Long categoryId, Map<String, Long> modelMap) {
-        return modelMap.computeIfAbsent(model, key -> {
-            ModelEntity modelEntity = new ModelEntity();
-            modelEntity.setModalName(model);
-            modelEntity.setCategoryEntity(this.categoryRepository.findById(categoryId).orElse(null));
-            return this.modelRepository.save(modelEntity).getId();
-        });
-    }
-
-    private Long getOrCreateCategory(String category, Map<String, Long> categoryMap) {
-        return categoryMap.computeIfAbsent(category, key -> {
-            CategoryEntity categoryEntity = new CategoryEntity();
-            categoryEntity.setCategoryName(category);
-            return this.categoryRepository.save(categoryEntity).getId();
-        });
-    }
 }

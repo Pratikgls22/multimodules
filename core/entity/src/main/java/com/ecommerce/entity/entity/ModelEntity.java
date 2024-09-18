@@ -10,16 +10,19 @@ import lombok.*;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
+@Table(name = "model", indexes = {
+        @Index(name = "index_model",columnList = "model_name",unique = true),
+})
 public class ModelEntity extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "Model_Name")
+    @Column(name = "model_name")
     private String modalName;
 
 
     @ManyToOne
-    @JoinColumn(name = "category_Id")
-    private CategoryEntity categoryEntity;
+    @JoinColumn(name = "main_category_id")
+    private MainCategoryEntity mainCategoryEntity;
 }

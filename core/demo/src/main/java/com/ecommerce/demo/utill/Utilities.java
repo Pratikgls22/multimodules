@@ -21,6 +21,7 @@ public class Utilities {
     /*<>flatMap used instead of map bcz userRepository.findById method already return Optional<UserEntity> so to prevent nested Optional object <>
      * */
     public UserEntity currentUser() {
+        System.out.println("tokenClaims in Utilities *****=****** " + tokenClaims.getUserId());
         return Optional.ofNullable(this.tokenClaims.getUserId())
                 .flatMap(this.userRepository::findById)
                 .orElse(null);

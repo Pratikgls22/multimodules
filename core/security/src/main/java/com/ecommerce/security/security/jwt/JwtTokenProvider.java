@@ -88,7 +88,6 @@ public class JwtTokenProvider {
         return this.parseJwtAndExtractClaims(token).getExpirationTime();
     }
 
-    //  In this method we break down JWT token and verify their signatures and getting the claims through claims we have header,payload,sign;
     private JWTClaimsSet parseJwtAndExtractClaims(String jwtToken) {
         try {
             SignedJWT signedJWT = SignedJWT.parse(jwtToken);
@@ -138,17 +137,19 @@ public class JwtTokenProvider {
                     .filter(foundEntry -> List.of(CommonEnum.USER_ID.getValue(), USER_ROLE.getValue()).contains(foundEntry.getKey()))
                     .filter(foundEntry -> Optional.ofNullable(foundEntry.getValue()).isPresent() && Optional.ofNullable(foundEntry.getKey()).isPresent())
                     .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+            JWTClaimsSet parse = JWTClaimsSet.parse(actualClaims);
+            return parse;
 
-            return JWTClaimsSet.parse(actualClaims);
         } catch (Exception e) {
             throw new CustomException(JwtExceptionEnum.INVALID_TOKEN.getValue(), HttpStatus.UNAUTHORIZED);
         }
     }
 
-    public String createToken(String username, String userRole) {
+    public String createToken(String username, String userRole,Long userId) {
         Map<String, Object> claims = new HashMap<>();
         claims.put(CommonEnum.USER_NAME.getValue(), username);
         claims.put(CommonEnum.USER_ROLE.getValue(), userRole);
+        claims.put(CommonEnum.USER_ID.getValue(), userId);
         // new with nimbus jose jwt
         return this.generateSignedJwt(username, claims).serialize();
     }

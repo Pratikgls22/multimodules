@@ -55,6 +55,7 @@ public class UserServiceImpl implements UserService {
 //      fetch current user
 
             UserEntity currentUser = utilities.currentUser();
+            System.out.println("currentUser in userserviceImpl *********************=**************** " + currentUser);
 
             UserEntity entity = new UserEntity();
             entity.setEmail(registerUserDTO.getEmail());

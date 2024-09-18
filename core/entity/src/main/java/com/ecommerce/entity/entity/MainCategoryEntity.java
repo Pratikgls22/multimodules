@@ -10,7 +10,10 @@ import lombok.*;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class CategoryEntity extends BaseEntity {
+@Table(name = "main_category", indexes = {
+        @Index(name = "index_main_category",columnList = "category_name",unique = true),
+})
+public class MainCategoryEntity extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

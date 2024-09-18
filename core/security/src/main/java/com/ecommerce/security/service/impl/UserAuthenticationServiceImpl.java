@@ -30,8 +30,6 @@ public class UserAuthenticationServiceImpl implements UserAuthenticationService 
 
         UserEntity userEntity = this.userRepository.findByEmail(userName).orElseThrow(() -> new RuntimeException(ExceptionEnum.USER_NOT_FOUND.getValue()));
 
-        System.out.println("userEntity UserAuthenticationServiceImpl=================== " + userEntity);
-
         List<GrantedAuthority> grantedAuthorities = new ArrayList<>();
 
         UserRoleMappingEntity userRoleMappingEntity = this.userRoleMappingRepository.findByUserId(userEntity).orElseThrow(() -> new RuntimeException(ExceptionEnum.USER_NOT_FOUND.getValue()));

@@ -6,21 +6,19 @@ import lombok.*;
 @Entity
 @Getter
 @Setter
-@ToString
 @Builder
-@NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "color", indexes = {
-        @Index(name = "index_color",columnList = "color",unique = true),
+@NoArgsConstructor
+@Table(name = "brand", indexes = {
+        @Index(name = "index_brand",columnList = "brand_name",unique = true),
 })
-public class ColorEntity extends BaseEntity {
-
+public class BrandEntity extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "color")
-    private String color;
+    @Column(name = "brand_name")
+    private String  brandName;
 
     @ManyToOne
     @JoinColumn(name = "main_category_id")
