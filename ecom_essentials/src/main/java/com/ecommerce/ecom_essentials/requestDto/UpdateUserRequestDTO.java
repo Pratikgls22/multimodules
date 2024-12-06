@@ -37,7 +37,7 @@ public class UpdateUserRequestDTO {
 
     @Size(min = 6, max = 6, message = "PIN code must be exactly 6 digits")
     @Pattern(regexp = "^[1-9]\\d{5}$", message = "PIN code must start with 1-9 and be followed by 5 digits")
-    private String PINCode;
+    private String pinCode;
 
     @Size(max = 50, message = "Country should not Be Greater then 50 Characters")
     private String country;
@@ -46,11 +46,11 @@ public class UpdateUserRequestDTO {
 
     private String accountHolderName;
 
-    private String IFSCCode;
+    private String ifscCode;
 
-    private String PANNumber;
+    private String panNumber;
 
-    private String GSTNumber;
+    private String gstNumber;
 
     @NotEmpty(message = "RoleName Must be Required")
     private String roleName;

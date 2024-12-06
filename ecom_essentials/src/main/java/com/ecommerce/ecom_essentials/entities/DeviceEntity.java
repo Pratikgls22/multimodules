@@ -19,4 +19,9 @@ public class DeviceEntity {
     @ManyToOne
     @JoinColumn(name = "brand_id")
     private BrandEntity brandId;
+
+
+    @ManyToOne
+    @JoinColumn(name = "category_id")
+    private CategoryEntity categoryId;
 }

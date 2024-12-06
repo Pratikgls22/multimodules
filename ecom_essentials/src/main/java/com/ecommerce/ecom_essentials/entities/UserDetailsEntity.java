@@ -33,8 +33,8 @@ public class UserDetailsEntity extends BaseEntity{
     @Column(name = "state")
     private String state;
 
-    @Column(name = "PIN_code")
-    private String PINcode;
+    @Column(name = "pin_code")
+    private String pincode;
 
     @Column(name = "country")
     private String country;
@@ -45,14 +45,14 @@ public class UserDetailsEntity extends BaseEntity{
     @Column(name = "account_holder_name")
     private String accountHolderName;
 
-    @Column(name = "IFSC_code")
-    private String IFSCCode;
+    @Column(name = "ifsc_code")
+    private String ifscCode;
 
-    @Column(name = "PAN_number")
-    private String PANNumber;
+    @Column(name = "pan_number")
+    private String panNumber;
 
-    @Column(name = "GST_number")
-    private String GSTNumber;
+    @Column(name = "gst_number")
+    private String gstNumber;
 
     @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JoinColumn(name = "user_id")

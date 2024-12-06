@@ -14,5 +14,8 @@ public class BrandEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String brandName;
-    private String key;
+
+    @ManyToOne
+    @JoinColumn(name = "category_id")
+    private CategoryEntity categoryId;
 }

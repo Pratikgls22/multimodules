@@ -164,8 +164,11 @@ public class UserServiceImpl implements UserService {
     public List<UserProjection> searchAllUsers(Pageable pageable, String searchKey) {
         try {
             // For Find All Users Details :
-            return this.userRepository.findAllUserDetails(pageable, searchKey);
-
+            var user = this.userRepository.findAllUserDetails(pageable, searchKey);
+            if (user.isEmpty()) {
+                throw new CustomException(ExceptionEnum.USER_NOT_FOUND.getMessage(), HttpStatus.NOT_FOUND);
+            }
+            return user;
         } catch (CustomException e) {
             log.info("Exception catch in get All user Details in user service imp");
             throw new CustomException(e.getMessage(), e.getHttpStatus());
@@ -183,7 +186,7 @@ public class UserServiceImpl implements UserService {
             UserRoleMappingEntity userRoleMappingEntity = checkUserExistOrNotInUserRoleMappig(userEntity);
 
             // Set User Status for Deactivate so User mark as deleted:
-            setStatus(userEntity, userDetailsEntity, userRoleMappingEntity,false, true);
+            setStatus(userEntity, userDetailsEntity, userRoleMappingEntity, false, true);
 
         } catch (CustomException e) {
             throw new CustomException(e.getMessage(), e.getHttpStatus());
@@ -202,7 +205,7 @@ public class UserServiceImpl implements UserService {
 
             if (!status) {
                 // Deactivate the user and mark them as deleted:
-                setStatus(userEntity,userDetailsEntity, userRoleMappingEntity,false, true);
+                setStatus(userEntity, userDetailsEntity, userRoleMappingEntity, false, true);
             }
             if (status) {
                 // Activate the user and set them as not deleted:
@@ -236,13 +239,13 @@ public class UserServiceImpl implements UserService {
             userDetailsEntity.setAddress(updateUserRequestDTO.getAddress());
             userDetailsEntity.setCity(updateUserRequestDTO.getCity());
             userDetailsEntity.setState(updateUserRequestDTO.getState());
-            userDetailsEntity.setPINcode(updateUserRequestDTO.getPINCode());
+            userDetailsEntity.setPincode(updateUserRequestDTO.getPinCode());
             userDetailsEntity.setCountry(updateUserRequestDTO.getCountry());
             userDetailsEntity.setAccountNumber(updateUserRequestDTO.getAccountNumber());
             userDetailsEntity.setAccountHolderName(updateUserRequestDTO.getAccountHolderName());
-            userDetailsEntity.setIFSCCode(updateUserRequestDTO.getIFSCCode());
-            userDetailsEntity.setPANNumber(updateUserRequestDTO.getPANNumber());
-            userDetailsEntity.setGSTNumber(updateUserRequestDTO.getGSTNumber());
+            userDetailsEntity.setIfscCode(updateUserRequestDTO.getIfscCode());
+            userDetailsEntity.setPanNumber(updateUserRequestDTO.getPanNumber());
+            userDetailsEntity.setGstNumber(updateUserRequestDTO.getGstNumber());
             this.userDetailsRepository.save(userDetailsEntity);
 
             var roleEntity = this.roleRepository.findByRoleName(updateUserRequestDTO.getRoleName());
@@ -271,12 +274,12 @@ public class UserServiceImpl implements UserService {
         userResponseDTO.setAddress(currenrtUserDetails.getAddress());
         userResponseDTO.setCity(currenrtUserDetails.getCity());
         userResponseDTO.setState(currenrtUserDetails.getState());
-        userResponseDTO.setPINCode(currenrtUserDetails.getPINcode());
+        userResponseDTO.setPinCode(currenrtUserDetails.getPincode());
         userResponseDTO.setCountry(currenrtUserDetails.getCountry());
         userResponseDTO.setAccountHolderName(currenrtUserDetails.getAccountHolderName());
-        userResponseDTO.setIFSCCode(currenrtUserDetails.getIFSCCode());
-        userResponseDTO.setPANNumber(currenrtUserDetails.getPANNumber());
-        userResponseDTO.setGSTNumber(currenrtUserDetails.getGSTNumber());
+        userResponseDTO.setIfscCode(currenrtUserDetails.getIfscCode());
+        userResponseDTO.setPanNumber(currenrtUserDetails.getPanNumber());
+        userResponseDTO.setGstNumber(currenrtUserDetails.getGstNumber());
         return userResponseDTO;
     }
 
@@ -289,13 +292,13 @@ public class UserServiceImpl implements UserService {
         userDetailsEntity.setAddress(userRequestDTO.getAddress());
         userDetailsEntity.setCity(userRequestDTO.getCity());
         userDetailsEntity.setState(userRequestDTO.getState());
-        userDetailsEntity.setPINcode(userRequestDTO.getPINCode());
+        userDetailsEntity.setPincode(userRequestDTO.getPinCode());
         userDetailsEntity.setCountry(userRequestDTO.getCountry());
         userDetailsEntity.setAccountNumber(userRequestDTO.getAccountNumber());
         userDetailsEntity.setAccountHolderName(userRequestDTO.getAccountHolderName());
-        userDetailsEntity.setIFSCCode(userRequestDTO.getIFSCCode());
-        userDetailsEntity.setPANNumber(userRequestDTO.getPANNumber());
-        userDetailsEntity.setGSTNumber(userRequestDTO.getGSTNumber());
+        userDetailsEntity.setIfscCode(userRequestDTO.getIfscCode());
+        userDetailsEntity.setPanNumber(userRequestDTO.getPanNumber());
+        userDetailsEntity.setGstNumber(userRequestDTO.getGstNumber());
         userDetailsEntity.setUserId(saveUserEntity);
         userDetailsEntity.setCreatedBy(currentUser);
         userDetailsEntity.setUpdatedBy(currentUser);

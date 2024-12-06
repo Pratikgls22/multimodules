@@ -24,8 +24,4 @@ public class SpecificationDataEntity {
     @JoinColumn(name = "specification_id")
     private SpecificationEntity specificationId;
 
-
-    @ManyToOne
-    @JoinColumn(name = "device_details_id")
-    private DeviceDetailsEntity deviceDetailsId;
 }

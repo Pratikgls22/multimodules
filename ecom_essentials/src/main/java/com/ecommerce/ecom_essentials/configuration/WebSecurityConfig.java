@@ -44,10 +44,8 @@ public class WebSecurityConfig {
     private String[] getPublicUrls() {
         return new String[]{
                 "/api/v1/auth/login",
-                "/api/v1/phone/deviceDetail",
-                "/api/v1/phone/deviceList",
-                "/api/v1/phone/phoneBrandList",
                 "/product/findStatus/status",
+                "/api/v1/phone/**",
                 "/product/{draftId}/rejectedProductDraft",
                 "/api/v1/auth/get",
                 "/v1/test/login",

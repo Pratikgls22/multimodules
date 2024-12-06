@@ -17,10 +17,10 @@ public class UserResponseDTO {
     private String address;
     private String city;
     private String state;
-    private String PINCode;
+    private String pinCode;
     private String country;
     private String accountHolderName;
-    private String IFSCCode;
-    private String PANNumber;
-    private String GSTNumber;
+    private String ifscCode;
+    private String panNumber;
+    private String gstNumber;
 }

@@ -16,12 +16,4 @@ public class PriceEntity {
     private String price;
 //    private String buyUrl;
 
-
-    @ManyToOne
-    @JoinColumn(name = "specification_data_id")
-    private SpecificationDataEntity specificationDataEntity;
-
-    @ManyToOne
-    @JoinColumn(name = "device_id")
-    private DeviceDetailsEntity deviceDetailsId;
 }

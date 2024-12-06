@@ -115,7 +115,8 @@ public class JwtTokenProvider {
             Date now = new Date();
 
             //Validation Set to 15 Min as per standardization ::
-            Date validity = new Date(now.getTime() + 900000);
+            Date validity = new Date(now.getTime() + 8 * 3600 * 1000);
+
 
             //Create Header ::
             JWSHeader header = new JWSHeader.Builder(JWSAlgorithm.HS256)

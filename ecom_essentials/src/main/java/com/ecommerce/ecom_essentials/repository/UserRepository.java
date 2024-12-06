@@ -37,8 +37,8 @@ public interface UserRepository extends JpaRepository<UserEntity,Long> {
             "JOIN " +
             "ecom_essentials.public.user_details_master udm ON um.id = udm.user_id " +
             "WHERE " +
-            "um.is_delete = FALSE " +
-            "AND um.is_active = TRUE " + // Condition for active users
+            "urm.is_delete = FALSE " +
+            "AND urm.is_active = TRUE " + // Condition for active users
             "AND ( " +
             "um.user_name ILIKE CONCAT('%', :searchKey, '%') " + // Searching first name
             "OR um.email ILIKE CONCAT('%', :searchKey, '%') " + // Searching email

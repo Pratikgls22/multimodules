@@ -14,6 +14,10 @@ public class RAMStorageEntity {
     private String RAMStorage;
 
     @ManyToOne
-    @JoinColumn(name = "device_details_id")
-    private DeviceDetailsEntity deviceDetailsId;
+    @JoinColumn(name = "brand_id")
+    private BrandEntity brandId;
+
+    @ManyToOne
+    @JoinColumn(name = "model_id")
+    private ModelEntity modelId;
 }

@@ -46,7 +46,7 @@ public enum ExceptionEnum {
   OPERATING_SYSTEM_NOT_FOUND("Operating System not Found", "OPERATING_SYSTEM_NOT_FOUND"),
   PRODUCT_ID_NOT_FOUND("Product Id not Found", "PRODUCT_ID_NOT_FOUND"),
   PRODUCT_DRAFT_ID_NOT_FOUND("Product Id not Found", "PRODUCT_DRAFT_ID_NOT_FOUND"),
-  ;
+  CATEGORY_NOT_FOUND("Category Not Found","CATEGORY_NOT_FOUND");
 
   private final String value;
   private final String message;

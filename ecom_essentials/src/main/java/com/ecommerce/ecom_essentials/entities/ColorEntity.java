@@ -16,6 +16,10 @@ public class ColorEntity {
     private String color;
 
     @ManyToOne
-    @JoinColumn(name = "device_id")
-    private DeviceDetailsEntity deviceDetailsId;
+    @JoinColumn(name = "brand_id")
+    private BrandEntity brandId;
+
+    @ManyToOne
+    @JoinColumn(name = "model_id")
+    private ModelEntity modelId;
 }

@@ -13,7 +13,7 @@ import java.util.Optional;
 @Repository
 public interface CameraRepository extends JpaRepository<CameraEntity,Long> {
 
-    Optional<CameraEntity> findByDeviceDetailsId(DeviceDetailsEntity deviceDetailsId);
+//    Optional<CameraEntity> findByDeviceDetailsId(DeviceDetailsEntity deviceDetailsId);
 
     @Query(value = "SELECT * FROM camera_entity ce WHERE ce.main_camera LIKE :mainCamera% LIMIT 1", nativeQuery = true)
     Optional<CameraEntity> findByMainCamera(@Param("mainCamera") String mainCamera);
