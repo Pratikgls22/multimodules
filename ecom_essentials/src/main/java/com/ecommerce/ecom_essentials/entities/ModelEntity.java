@@ -4,17 +4,24 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
-@Entity
-@Setter
 @Getter
-public class ModelEntity {
+@Setter
+@Entity
+public class DeviceEntity {
     @Id
-    @GeneratedValue(strategy =  GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private String modelName;
-    private String modelImage;
+    private String deviceName;
+    private String deviceType;
+    private String deviceImage;
+    private String key;
 
     @ManyToOne
     @JoinColumn(name = "brand_id")
     private BrandEntity brandId;
+
+
+    @ManyToOne
+    @JoinColumn(name = "category_id")
+    private CategoryEntity categoryId;
 }
