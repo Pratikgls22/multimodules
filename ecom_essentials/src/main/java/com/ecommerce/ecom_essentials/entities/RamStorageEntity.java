@@ -7,11 +7,11 @@ import lombok.Setter;
 @Entity
 @Setter
 @Getter
-public class RAMStorageEntity {
+public class RamStorageEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private String RAMStorage;
+    private String ramStorage;
 
     @ManyToOne
     @JoinColumn(name = "brand_id")

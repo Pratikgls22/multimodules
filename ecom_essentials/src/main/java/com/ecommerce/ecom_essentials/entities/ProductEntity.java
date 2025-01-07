@@ -31,7 +31,7 @@ public class ProductEntity extends BaseEntity{
 
     @ManyToOne
     @JoinColumn(name = "ram_storage_id")
-    private RAMStorageEntity ramStorageId;
+    private RamStorageEntity ramStorageId;
 
     @ManyToOne
     @JoinColumn(name = "internal_storage_id")
@@ -48,6 +48,10 @@ public class ProductEntity extends BaseEntity{
     @ManyToOne
     @JoinColumn(name = "operating_system_id")
     private OperatingSystemEntity operatingSystemId;
+
+    @ManyToOne
+    @JoinColumn(name = "image_id")
+    private ImageEntity imageId;
 
     private String price;
 

@@ -47,6 +47,7 @@ public class WebSecurityConfig {
                 "/product/findStatus/status",
                 "/api/v1/phone/**",
                 "/product/{draftId}/rejectedProductDraft",
+                "/product/fetchAllProducts",
                 "/api/v1/auth/get",
                 "/v1/test/login",
                 "/test/multiModule/testApi",

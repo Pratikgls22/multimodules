@@ -4,8 +4,8 @@ import com.ecommerce.ecom_essentials.entities.ProductDraftEntity;
 import com.ecommerce.ecom_essentials.enums.Status;
 import com.ecommerce.ecom_essentials.requestDto.ProductRequestDTO;
 import com.ecommerce.ecom_essentials.requestDto.UpdateProductRequestDTO;
-import com.ecommerce.ecom_essentials.responseDto.ProductProjection;
-import org.springframework.data.jpa.repository.Query;
+import com.ecommerce.ecom_essentials.responseDto.ProductDraftProjection;
+import com.ecommerce.ecom_essentials.responseDto.ProductsProjection;
 
 import java.util.List;
 
@@ -16,7 +16,11 @@ public interface ProductService {
 
     ProductDraftEntity updateProduct(Long productId, UpdateProductRequestDTO updateProductRequestDTO);
 
-    List<ProductProjection> getDraftsByStatus(Status status);
+    List<ProductDraftProjection> getDraftsByStatus(Status status);
 
-    void rejectProductDraft(Long draftId, Status status);
+    void rejectProductDraft(Long draftId);
+
+    List<ProductsProjection> fetchAllProducts();
+
+    List<ProductDraftProjection> fetchProductDraftsByVendor(Long vendorId);
 }

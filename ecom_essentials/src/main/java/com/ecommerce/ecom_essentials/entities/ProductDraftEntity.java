@@ -22,10 +22,11 @@ public class ProductDraftEntity extends BaseEntity{
     private String color;
     private String ramStorage;
     private String internalStorage;
-    private String mainCamera;
+    private String camera;
     private String battery;
     private String operatingSystem;
     private String price;
+    private String image;
 
     @Enumerated(EnumType.STRING)
     private Status status;

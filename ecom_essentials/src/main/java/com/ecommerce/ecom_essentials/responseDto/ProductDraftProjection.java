@@ -2,7 +2,7 @@ package com.ecommerce.ecom_essentials.responseDto;
 
 import com.ecommerce.ecom_essentials.enums.Status;
 
-public interface ProductProjection {
+public interface ProductDraftProjection {
      Long getId();
      String getBrand();
      String getModelName();

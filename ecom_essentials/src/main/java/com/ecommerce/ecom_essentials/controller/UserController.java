@@ -3,6 +3,7 @@ package com.ecommerce.ecom_essentials.controller;
 import com.ecommerce.ecom_essentials.enums.GetSortBy;
 import com.ecommerce.ecom_essentials.requestDto.UpdateUserRequestDTO;
 import com.ecommerce.ecom_essentials.requestDto.UserRequestDTO;
+import com.ecommerce.ecom_essentials.requestDto.VendorRequestDTO;
 import com.ecommerce.ecom_essentials.responseDto.ApiResponse;
 import com.ecommerce.ecom_essentials.service.UserService;
 import jakarta.validation.Valid;
@@ -29,7 +30,7 @@ public class UserController {
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     public ResponseEntity<ApiResponse> createUser(@RequestBody @Valid UserRequestDTO userRequestDTO) {
         this.userService.createUser(userRequestDTO);
-        return new ResponseEntity<>(new ApiResponse(HttpStatus.OK, "User Created Successfully !", HttpStatus.OK), HttpStatus.OK);
+        return new ResponseEntity<>(new ApiResponse(HttpStatus.CREATED, "User Created Successfully !", HttpStatus.CREATED), HttpStatus.CREATED);
     }
 
     @GetMapping("/searchUser")
@@ -65,5 +66,12 @@ public class UserController {
     public ResponseEntity<ApiResponse> updateUserById(@Valid @RequestBody UpdateUserRequestDTO updateUserRequestDTO, @PathVariable(value = "id") Long id){
         var response = this.userService.updateUserById(id,updateUserRequestDTO);
         return new ResponseEntity<>(new ApiResponse(HttpStatus.OK,"User Updated Successfully",response),HttpStatus.OK);
+    }
+
+    @PostMapping("/createVendor")
+    @PreAuthorize("hasAuthority('Customer')")
+    public ResponseEntity<ApiResponse> createVendor(@RequestBody @Valid VendorRequestDTO vendorRequestDTO) {
+        var response = this.userService.createVendor(vendorRequestDTO);
+        return new ResponseEntity<>(new ApiResponse(HttpStatus.CREATED, "User Created Successfully !", response), HttpStatus.CREATED);
     }
 }

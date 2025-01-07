@@ -7,7 +7,8 @@ import com.ecommerce.ecom_essentials.exception.CustomException;
 import com.ecommerce.ecom_essentials.repository.*;
 import com.ecommerce.ecom_essentials.requestDto.ProductRequestDTO;
 import com.ecommerce.ecom_essentials.requestDto.UpdateProductRequestDTO;
-import com.ecommerce.ecom_essentials.responseDto.ProductProjection;
+import com.ecommerce.ecom_essentials.responseDto.ProductDraftProjection;
+import com.ecommerce.ecom_essentials.responseDto.ProductsProjection;
 import com.ecommerce.ecom_essentials.service.ProductService;
 import com.ecommerce.ecom_essentials.utility.Utilities;
 import lombok.RequiredArgsConstructor;
@@ -29,12 +30,12 @@ public class ProductServiceImpl implements ProductService {
     private final BrandRepository brandRepository;
     private final ColorRepository colorRepository;
     private final CameraRepository cameraRepository;
-    private final ModelRepository modelRepository;
-    private final RAMRepository ramRepository;
+    private final RamRepository ramRepository;
     private final InternalStorageRepository internalStorageRepository;
     private final BatteryRepository batteryRepository;
     private final OperatingSystemRepository operatingSystemRepository;
-
+    private final ModelRepository modelRepository;
+    private final ImageRepository imageRepository;
 
     @Override
     public ProductDraftEntity createProductDraft(ProductRequestDTO productRequestDTO) {
@@ -47,14 +48,16 @@ public class ProductServiceImpl implements ProductService {
                     ProductDraftEntity productDraft = ProductDraftEntity.builder()
                             .brand(productRequestDTO.getBrand())
                             .modelName(productRequestDTO.getModelName())
+                            .image(productRequestDTO.getImage())
                             .color(productRequestDTO.getColor())
                             .ramStorage(productRequestDTO.getRamStorage())
                             .internalStorage(productRequestDTO.getInternalStorage())
-                            .mainCamera(productRequestDTO.getMainCamera())
+                            .camera(productRequestDTO.getCamera())
                             .battery(productRequestDTO.getBattery())
                             .operatingSystem(productRequestDTO.getOperatingSystem())
                             .price(productRequestDTO.getPrice())
                             .status(productRequestDTO.getStatus() == null ? null : Status.PENDING)   // Default to PENDING if null
+                            .productId(null)
                             .build();
                     productDraft.setCreatedBy(currentUser);
                     productDraft.setUpdatedBy(currentUser);
@@ -65,14 +68,16 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public List<ProductProjection> getDraftsByStatus(Status status) {
+    public List<ProductDraftProjection> getDraftsByStatus(Status status) {
         return productDraftRepository.findByStatus(String.valueOf(status));
     }
 
     @Override
-    public void rejectProductDraft(Long draftId, Status status) {
+    public void rejectProductDraft(Long draftId) {
+        System.out.println("draftId = " + draftId);
         var productDraftOptional = this.productDraftRepository.findById(draftId);
-        if (productDraftOptional.isEmpty()){
+        System.out.println("productDraftOptional = " + productDraftOptional);
+        if (productDraftOptional.isEmpty()) {
             log.info("ProductDraftId is Empty :: {}", productDraftOptional);
             throw new CustomException(ExceptionEnum.PRODUCT_DRAFT_ID_NOT_FOUND.getMessage(), HttpStatus.NOT_FOUND);
         }
@@ -80,10 +85,24 @@ public class ProductServiceImpl implements ProductService {
 
         // Update status only if it's not already REJECTED
         if (!Status.REJECTED.equals(productDraftEntity.getStatus())) {
-            productDraftEntity.setStatus(status);
+            productDraftEntity.setStatus(Status.REJECTED);
             // Save updated entity
             this.productDraftRepository.save(productDraftEntity);
         }
+    }
+
+    @Override
+    public List<ProductsProjection> fetchAllProducts() {
+        return this.productRepository.findAllProducts();
+    }
+
+    @Override
+    public List<ProductDraftProjection> fetchProductDraftsByVendor(Long vendorId) {
+        var vendor = this.productDraftRepository.findByUserId(vendorId);
+        if (vendor.isEmpty()){
+             throw new CustomException(ExceptionEnum.USER_ID_NOT_FOUND.getMessage(), HttpStatus.NOT_FOUND);
+        }
+        return vendor;
     }
 
     @Override
@@ -127,7 +146,7 @@ public class ProductServiceImpl implements ProductService {
                 .color(updateProductRequestDTO.getColor())
                 .ramStorage(updateProductRequestDTO.getRamStorage())
                 .internalStorage(updateProductRequestDTO.getInternalStorage())
-                .mainCamera(updateProductRequestDTO.getMainCamera())
+                .camera(updateProductRequestDTO.getMainCamera())
                 .battery(updateProductRequestDTO.getBattery())
                 .operatingSystem(updateProductRequestDTO.getOperatingSystem())
                 .price(updateProductRequestDTO.getPrice())
@@ -142,28 +161,48 @@ public class ProductServiceImpl implements ProductService {
 
     // For Create Product :
     private void createProduct(ProductDraftEntity productDraftEntity, UserEntity currentUser) {
+        // Split ProductEntity Cameras Data:
+        String cameras = productDraftEntity.getCamera();
+        String[] cameraParts = cameras.split(",", 2);
+        String mainCamera = cameraParts[0].trim();
+        System.out.println("mainCamera ==== " + mainCamera);
+        String selfieCamera = cameraParts[1].trim();
+        System.out.println(" first selfieCamera = " + selfieCamera);
+        if (selfieCamera.equalsIgnoreCase("null")) {
+            System.out.println("enter in or not ");
+            selfieCamera = null;
+        }
+        System.out.println("selfieCamera ==== " + selfieCamera);
+
+
         BrandEntity brandName = this.brandRepository.findByBrandName(productDraftEntity.getBrand())
                 .orElseThrow(() -> new CustomException(ExceptionEnum.BRAND_NOT_FOUND.getMessage(), HttpStatus.NOT_FOUND));
 
-        ModelEntity modelName = this.modelRepository.findByModelName(productDraftEntity.getModelName())
+        ModelEntity modelName = this.modelRepository.findByDeviceName(productDraftEntity.getModelName())
                 .orElseThrow(() -> new CustomException(ExceptionEnum.MODEL_NAME_NOT_FOUND.getMessage(), HttpStatus.NOT_FOUND));
+        System.out.println("modelName.getId() = " + modelName.getId());
 
         ColorEntity color = this.colorRepository.findByColor(productDraftEntity.getColor())
                 .orElseThrow(() -> new CustomException(ExceptionEnum.COLOR_NOT_FOUND.getMessage(), HttpStatus.NOT_FOUND));
 
-        RAMStorageEntity ramStorage = this.ramRepository.findByRAMStorage(productDraftEntity.getRamStorage())
+        RamStorageEntity ramStorage = this.ramRepository.findByRamStorage(productDraftEntity.getRamStorage())
                 .orElseThrow(() -> new CustomException(ExceptionEnum.RAM_NOT_FOUND.getMessage(), HttpStatus.NOT_FOUND));
 
         InternalStorageEntity internalStorage = this.internalStorageRepository.findByInternalStorage(productDraftEntity.getInternalStorage())
                 .orElseThrow(() -> new CustomException(ExceptionEnum.INTERNAL_STORAGE_NOT_FOUND.getMessage(), HttpStatus.NOT_FOUND));
 
-        CameraEntity camera = this.cameraRepository.findByMainCamera(productDraftEntity.getMainCamera())
+        CameraEntity camera = this.cameraRepository.findCameraByModelId(modelName.getId())
                 .orElseThrow(() -> new CustomException(ExceptionEnum.CAMERA_NOT_FOUND.getMessage(), HttpStatus.NOT_FOUND));
+        System.out.println("final camera = " + camera);
 
         BatteryEntity battery = this.batteryRepository.findByBatteryCapacity(productDraftEntity.getBattery())
                 .orElseThrow(() -> new CustomException(ExceptionEnum.BATTERY_NOT_FOUND.getMessage(), HttpStatus.NOT_FOUND));
 
-        OperatingSystemEntity operatingSystem = this.operatingSystemRepository.findByOperatingSystem(productDraftEntity.getOperatingSystem())
+        ImageEntity image = this.imageRepository.findImageByModelId(modelName.getId())
+                .orElseThrow(() -> new CustomException(ExceptionEnum.IMAGE_NOT_FOUND.getMessage(), HttpStatus.NOT_FOUND));
+
+                OperatingSystemEntity
+        operatingSystem = this.operatingSystemRepository.findByOperatingSystem(productDraftEntity.getOperatingSystem())
                 .orElseThrow(() -> new CustomException(ExceptionEnum.OPERATING_SYSTEM_NOT_FOUND.getMessage(), HttpStatus.NOT_FOUND));
 
         UserEntity user = this.userRepository.findById(productDraftEntity.getUserId().getId())
@@ -175,20 +214,21 @@ public class ProductServiceImpl implements ProductService {
             // Update Existing Product
             productEntity = this.productRepository.findById(productDraftEntity.getProductId().getId())
                     .orElseThrow(() -> new CustomException(ExceptionEnum.PRODUCT_ID_NOT_FOUND.getMessage(), HttpStatus.NOT_FOUND));
-            saveProduct(productDraftEntity, brandName, modelName, color, ramStorage, internalStorage, camera, battery, operatingSystem, user, currentUser, productEntity);
+            saveProduct(productDraftEntity, brandName, modelName, color,image, ramStorage, internalStorage, camera, battery, operatingSystem, user, currentUser, productEntity);
         } else {
             // Create a Product based on Product Draft:
             productEntity = new ProductEntity();
-            saveProduct(productDraftEntity, brandName, modelName, color, ramStorage, internalStorage, camera, battery, operatingSystem, user, currentUser, productEntity);
+            saveProduct(productDraftEntity, brandName, modelName, color, image, ramStorage, internalStorage, camera, battery, operatingSystem, user, currentUser, productEntity);
         }
     }
 
     //For save Product :
-    private void saveProduct(ProductDraftEntity productDraftEntity, BrandEntity brandName, ModelEntity modelName, ColorEntity color, RAMStorageEntity ramStorage, InternalStorageEntity internalStorage, CameraEntity camera, BatteryEntity battery, OperatingSystemEntity operatingSystem, UserEntity user, UserEntity currentUser, ProductEntity productEntity) {
+    private void saveProduct(ProductDraftEntity productDraftEntity, BrandEntity brandName, ModelEntity modelName, ColorEntity color,ImageEntity image, RamStorageEntity ramStorage, InternalStorageEntity internalStorage, CameraEntity camera, BatteryEntity battery, OperatingSystemEntity operatingSystem, UserEntity user, UserEntity currentUser, ProductEntity productEntity) {
         productEntity.setPrice(productDraftEntity.getPrice());
-        productEntity.setBrandId(brandName);
         productEntity.setModelId(modelName);
+        productEntity.setBrandId(brandName);
         productEntity.setColorId(color);
+        productEntity.setImageId(image);
         productEntity.setRamStorageId(ramStorage);
         productEntity.setInternalStorageId(internalStorage);
         productEntity.setCameraId(camera);

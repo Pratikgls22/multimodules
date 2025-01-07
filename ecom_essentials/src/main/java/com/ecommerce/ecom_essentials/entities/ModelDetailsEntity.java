@@ -1,7 +1,5 @@
 package com.ecommerce.ecom_essentials.entities;
 
-import com.ecommerce.ecom_essentials.utility.JsonNodeConverter;
-import com.fasterxml.jackson.databind.JsonNode;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -9,7 +7,7 @@ import lombok.Setter;
 @Entity
 @Getter
 @Setter
-public class DeviceDetailsEntity {
+public class ModelDetailsEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -31,8 +29,8 @@ public class DeviceDetailsEntity {
     private String moreSpecification;
 
     @ManyToOne
-    @JoinColumn(name = "device_id")
-    private DeviceEntity deviceEntityId;
+    @JoinColumn(name = "model_id")
+    private ModelEntity modelId;
 
     @ManyToOne
     @JoinColumn(name = "brand_id")

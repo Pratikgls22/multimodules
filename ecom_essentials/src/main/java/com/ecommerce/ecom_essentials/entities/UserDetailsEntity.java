@@ -1,10 +1,7 @@
 package com.ecommerce.ecom_essentials.entities;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 @Entity
 @Getter
@@ -12,6 +9,7 @@ import lombok.Setter;
 @AllArgsConstructor
 @NoArgsConstructor
 @Table(name = "user_details_master")
+@Builder
 public class UserDetailsEntity extends BaseEntity{
 
     @Id

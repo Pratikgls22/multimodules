@@ -26,9 +26,16 @@ public class ProductController {
     }
 
     @GetMapping("/findStatus/status")
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     public ResponseEntity<ApiResponse> getDraftsByStatus(@RequestParam Status status){
         var response = this.productService.getDraftsByStatus(status);
         return new ResponseEntity<>(new ApiResponse(HttpStatus.OK,"Status is :" + status,response),HttpStatus.OK);
+    }
+
+    @GetMapping("/fetchAllProducts")
+    public ResponseEntity<ApiResponse> fetchAllProducts(){
+        var response = this.productService.fetchAllProducts();
+        return new ResponseEntity<>(new ApiResponse(HttpStatus.OK,"List Of All Products !", response),HttpStatus.OK);
     }
 
     @PostMapping("/{draftId}/approveProductDraft")
@@ -47,9 +54,16 @@ public class ProductController {
 
     @PutMapping("/{draftId}/rejectProductDraft")
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")
-    public ResponseEntity<ApiResponse> rejectProductDraft(@PathVariable Long draftId, @RequestParam(defaultValue = "REJECTED") Status status){
-        this.productService.rejectProductDraft(draftId,status);
+    public ResponseEntity<ApiResponse> rejectProductDraft(@PathVariable Long draftId){
+        this.productService.rejectProductDraft(draftId);
         return new ResponseEntity<>(new ApiResponse(HttpStatus.OK,"Your Product Draft is Rejected",HttpStatus.OK),HttpStatus.OK);
+    }
+
+    @GetMapping("/productDrafts/{vendorId}")
+    @PreAuthorize("hasAuthority('Vendor')")
+    public ResponseEntity<ApiResponse> fetchProductDraftsByVendor(@PathVariable(value = "vendorId") Long vendorId){
+        var response = this.productService.fetchProductDraftsByVendor(vendorId);
+        return new ResponseEntity<>(new ApiResponse(HttpStatus.OK, "List Of ProductDrafts !", response),HttpStatus.OK);
     }
 
 }

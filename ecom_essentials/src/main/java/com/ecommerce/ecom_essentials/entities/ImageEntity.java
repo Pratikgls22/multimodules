@@ -7,13 +7,17 @@ import lombok.Setter;
 @Entity
 @Getter
 @Setter
-public class PictureEntity {
+public class ImageEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String url;
 
     @ManyToOne
-    @JoinColumn(name = "device_id")
-    private DeviceDetailsEntity deviceDetailsId;
+    @JoinColumn(name = "brand_id")
+    private BrandEntity brandId;
+
+    @ManyToOne
+    @JoinColumn(name = "model_id")
+    private ModelEntity modelId;
 }

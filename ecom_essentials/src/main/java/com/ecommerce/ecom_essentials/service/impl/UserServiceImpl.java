@@ -12,6 +12,7 @@ import com.ecommerce.ecom_essentials.repository.UserRepository;
 import com.ecommerce.ecom_essentials.repository.UserRoleMappingRepository;
 import com.ecommerce.ecom_essentials.requestDto.UpdateUserRequestDTO;
 import com.ecommerce.ecom_essentials.requestDto.UserRequestDTO;
+import com.ecommerce.ecom_essentials.requestDto.VendorRequestDTO;
 import com.ecommerce.ecom_essentials.responseDto.UserProjection;
 import com.ecommerce.ecom_essentials.responseDto.UserResponseDTO;
 import com.ecommerce.ecom_essentials.service.UserService;
@@ -158,6 +159,43 @@ public class UserServiceImpl implements UserService {
             throw new CustomException(e.getMessage(), e.getHttpStatus());
         }
 
+    }
+
+    @Override
+    public UserDetailsEntity createVendor(VendorRequestDTO vendorRequestDTO) {
+        UserEntity currentUser = utilities.currentUser();
+        String role = "Vendor";
+        var vedor = this.userRepository.findById(currentUser.getId());
+        if (vedor.isEmpty()){
+            throw new CustomException(ExceptionEnum.VENDOR_ID_NOT_FOUND.getMessage(), HttpStatus.NOT_FOUND);
+        }
+
+        RoleEntity roles = this.roleRepository.findByRoleName(role)
+                .orElseThrow(() -> new CustomException(ExceptionEnum.ROLE_NOT_FOUND.getMessage(), HttpStatus.NOT_FOUND));
+        UserRoleMappingEntity vendorDetail = this.userRoleMappingRepository.findByUserId(vedor.get())
+                .orElseThrow(() -> new CustomException(ExceptionEnum.VENDOR_ID_NOT_FOUND.getMessage(), HttpStatus.NOT_FOUND));
+        vendorDetail.setRoleId(roles);
+        vendorDetail.setUserId(vedor.get());
+        this.userRoleMappingRepository.save(vendorDetail);
+
+        UserDetailsEntity vendorDetails = UserDetailsEntity.builder()
+                .userId(currentUser)
+                .phoneNumber(vendorRequestDTO.getPhoneNumber())
+                .alternatePhoneNumber(vendorRequestDTO.getAlternatePhoneNumber())
+                .address(vendorRequestDTO.getAddress())
+                .city(vendorRequestDTO.getCity())
+                .state(vendorRequestDTO.getState())
+                .pincode(vendorRequestDTO.getPinCode())
+                .country(vendorRequestDTO.getCountry())
+                .accountNumber(vendorRequestDTO.getAccountNumber())
+                .accountHolderName(vendorRequestDTO.getAccountHolderName())
+                .ifscCode(vendorRequestDTO.getIfscCode())
+                .panNumber(vendorRequestDTO.getPanNumber())
+                .gstNumber(vendorRequestDTO.getGstNumber())
+                .build();
+        vendorDetails.setCreatedBy(currentUser);
+        vendorDetails.setUpdatedBy(currentUser);
+        return this.userDetailsRepository.save(vendorDetails);
     }
 
     @Override

@@ -29,6 +29,7 @@ public enum ExceptionEnum {
   ROLE_ALREADY_EXIST("Role already exists", "ROLE_EXISTS"),
   MODEL_NAME_ALREADY_EXIST("Model Name already existS", "MODEL_NAME_ALREADY_EXIST"),
   IMAGE_ALREADY_EXIST("Image already existS", "IMAGE_ALREADY_EXIST"),
+  IMAGE_NOT_FOUND("Image not found", "IMAGE_NOT_FOUND"),
   BATTERY_CAPACITY_ALREADY_EXIST("Battery Capacity already existS", "BATTERY_CAPACITY_ALREADY_EXIST"),
   COLOR_ALREADY_EXIST("Color already exists", "COLOR_ALREADY_EXIST"),
   INTERNAL_STORAGE_ALREADY_EXIST("Internal Storage already exists", "INTERNAL_STORAGE_ALREADY_EXIST"),
@@ -38,6 +39,8 @@ public enum ExceptionEnum {
   DRAFT_NOT_PENDING("Draft not Pending", "DRAFT_NOT_PENDING"),
   BRAND_NOT_FOUND("Brand not Found", "BRAND_NOT_FOUND"),
   MODEL_NAME_NOT_FOUND("Model Name not Found", "MODEL_NAME_NOT_FOUND"),
+  BRAND_HAS_NO_DATA("Brand has not Data", "BRAND_HAS_NO_DATA"),
+  MODEL_HAS_NO_DATA("Model has not Data", "MODEL_HAS_NO_DATA"),
   COLOR_NOT_FOUND("Color not Found", "COLOR_NOT_FOUND"),
   RAM_NOT_FOUND("Ram Storage not Found", "RAM_NOT_FOUND"),
   INTERNAL_STORAGE_NOT_FOUND("Internal Storage not Found", "INTERNAL_STORAGE_NOT_FOUND"),
@@ -46,8 +49,8 @@ public enum ExceptionEnum {
   OPERATING_SYSTEM_NOT_FOUND("Operating System not Found", "OPERATING_SYSTEM_NOT_FOUND"),
   PRODUCT_ID_NOT_FOUND("Product Id not Found", "PRODUCT_ID_NOT_FOUND"),
   PRODUCT_DRAFT_ID_NOT_FOUND("Product Id not Found", "PRODUCT_DRAFT_ID_NOT_FOUND"),
+  VENDOR_ID_NOT_FOUND("Vendor Id not found", "VENDOR_ID_NOT_FOUND"),
   CATEGORY_NOT_FOUND("Category Not Found","CATEGORY_NOT_FOUND");
-
   private final String value;
   private final String message;
 }

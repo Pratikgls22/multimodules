@@ -16,10 +16,11 @@ public class ProductRequestDTO {
     private String color;
     private String ramStorage;
     private String internalStorage;
-    private String mainCamera;
+    private String camera;
     private String battery;
     private String operatingSystem;
     private String price;
+    private String image;
     private Status status; // Default to PENDING
     private Long productId;
 }

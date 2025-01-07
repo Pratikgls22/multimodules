@@ -5,8 +5,6 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 
-import java.util.List;
-
 @Entity
 @Setter
 @Getter
@@ -25,4 +23,5 @@ public class CameraEntity {
     @ManyToOne
     @JoinColumn(name = "model_id")
     private ModelEntity modelId;
+
 }
