@@ -18,6 +18,7 @@
         <java.version>17</java.version>
         <nimbus-jose-jwt.version>9.31</nimbus-jose-jwt.version>
         <spring-doc.version>2.3.0</spring-doc.version>
+        <spring-data-elasticsearch.version>4.3.0</spring-data-elasticsearch.version>
     </properties>
 
     <modules>
@@ -79,13 +80,11 @@
 
 
         <!-- JWT library - nimbus -->
-
         <dependency>
             <groupId>com.nimbusds</groupId>
             <artifactId>nimbus-jose-jwt</artifactId>
             <version>${nimbus-jose-jwt.version}</version>
         </dependency>
-
 
         <!--        swagger dependency-->
         <dependency>
@@ -112,6 +111,20 @@
             <version>5.0.0</version>
         </dependency>
 
+        <!--		dependency for elasticsearch -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-elasticsearch</artifactId>
+            <version>3.0.0</version>
+        </dependency>
+
+        <!-- For Elasticsearch 7.x, if you're using that version -->
+        <dependency>
+            <groupId>org.elasticsearch.client</groupId>
+            <artifactId>elasticsearch-rest-high-level-client</artifactId>
+            <version>7.10.2</version> <!-- Ensure compatibility with your Elasticsearch server -->
+        </dependency>
+
     </dependencies>
 
     <build>
@@ -119,6 +132,7 @@
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
+                <version>1.2.7.RELEASE</version>
                 <executions>
                     <execution>
                         <id>repackage</id>
@@ -128,6 +142,7 @@
                     </execution>
                 </executions>
                 <configuration>
+<!--                    <mainClass>com.ecommerce.demo.DemoApplication</mainClass>-->
                     <excludes>
                         <exclude>
                             <groupId>org.projectlombok</groupId>
@@ -145,6 +160,7 @@
                 </configuration>
             </plugin>
         </plugins>
+<!--        <finalName>spring-boot-docker</finalName>-->
     </build>
 
 </project>

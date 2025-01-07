@@ -13,7 +13,7 @@ public interface RoleRepository extends JpaRepository<RoleEntity, Long> {
 
 
   @Query("select r from RoleEntity r where r.isDelete = false ")
-  List<RoleEntity> findAllActiveRole();
+  List<RoleEntity> findAllActiveRoll();
 
   Optional<RoleEntity> findByRole(String roleName);
 }

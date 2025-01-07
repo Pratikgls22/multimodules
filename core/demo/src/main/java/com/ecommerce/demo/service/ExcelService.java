@@ -6,4 +6,6 @@ import java.io.IOException;
 
 public interface ExcelService {
     void readFileAndSave(MultipartFile multipartFile) throws IOException;
+
+    void getAllEsExcelData();
 }

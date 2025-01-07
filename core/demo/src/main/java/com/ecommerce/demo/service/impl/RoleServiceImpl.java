@@ -6,7 +6,7 @@ import com.ecommerce.entity.entity.RoleEntity;
 import com.ecommerce.entity.entity.UserEntity;
 import com.ecommerce.entity.requestDto.RoleRequestDTO;
 import com.ecommerce.entity.responseDto.RoleResponseDTO;
-import com.ecommerce.repository.repository.RoleRepository;
+import com.ecommerce.repository.jpaRepository.RoleRepository;
 import com.ecommerce.security.config.ModalMapperConfig;
 import com.ecommerce.utility.enums.ExceptionEnum;
 import com.ecommerce.utility.exception.CustomException;
@@ -60,11 +60,10 @@ public class RoleServiceImpl implements RoleService {
     @Override
     public List<RoleResponseDTO> getAllRole() {
         try {
-            return this.roleRepository.findAllActiveRole().stream().map(this::mapEntityToDto).collect(Collectors.toList());
+            return this.roleRepository.findAllActiveRoll().stream().map(this::mapEntityToDto).collect(Collectors.toList());
         } catch (CustomException e) {
             throw new CustomException(e.getMessage(), e.getHttpStatus());
         }
-
     }
 
     @Override

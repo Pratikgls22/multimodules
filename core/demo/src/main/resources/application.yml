@@ -1,23 +1,38 @@
+#spring:
+#  datasource:
+#    driver-class-name: com.mysql.cj.jdbc.Driver
+#    url: ${SPRING_DATASOURCE_URL}
+#    username: ${SPRING_DATASOURCE_USERNAME}
+#    password: ${SPRING_DATASOURCE_PASSWORD}
+#
+#  jpa:
+#    properties:
+#      hibernate:
+#        dialect: org.hibernate.dialect.MySQL8Dialect
+#        format_sql: true
+#    hibernate:
+#      ddl-auto: update
+#    show-sql: true
+#
+#
+#
+##  elasticsearch:
+##    rest:
+##      uris=http://localhost:9200
+##    username: elastic
+##    password: cgdJPuno+wrU2HBNyOnA
+#
+#
+#server:
+#  port: 9093
+#
+#
+#
+#logging:
+#  level:
+#    web: debug
+#
+
 spring:
-  datasource:
-    driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://localhost:3306/react-security?createDatabaseIfNotExist=true&useSSL=false
-    username: root
-    password: root
-
-  jpa:
-    properties:
-      hibernate:
-        dialect: org.hibernate.dialect.MySQL8Dialect
-        format_sql: true
-    hibernate:
-      ddl-auto: update
-    show-sql: true
-
-
-server:
-  port: 9093
-
-logging:
-  level:
-    web: debug
+  profiles:
+    active: dev

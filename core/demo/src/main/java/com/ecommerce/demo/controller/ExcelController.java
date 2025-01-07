@@ -26,4 +26,10 @@ public class ExcelController {
         this.excelService.readFileAndSave(multipartFile);
         return new ResponseEntity<>(new ApiResponse(HttpStatus.OK, "File Saved!", new HashMap<>()), HttpStatus.OK);
     }
+
+    @GetMapping("/getAllEsExcelData")
+    public ResponseEntity<ApiResponse> getAllEsExcelData() {
+        this.excelService.getAllEsExcelData();
+        return new ResponseEntity<>(new ApiResponse(HttpStatus.OK, "Get All Elastic search Data form esrepository", HttpStatus.OK), HttpStatus.OK);
+    }
 }

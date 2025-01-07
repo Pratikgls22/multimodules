@@ -2,6 +2,7 @@ package com.ecommerce.entity.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.springframework.data.elasticsearch.annotations.Document;
 
 @Entity
 @Getter
@@ -10,9 +11,7 @@ import lombok.*;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "main_category", indexes = {
-        @Index(name = "index_main_category",columnList = "category_name",unique = true),
-})
+@Table(name = "main_category")
 public class MainCategoryEntity extends BaseEntity {
 
     @Id

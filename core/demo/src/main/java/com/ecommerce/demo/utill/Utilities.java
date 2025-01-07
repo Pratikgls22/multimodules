@@ -3,7 +3,7 @@ package com.ecommerce.demo.utill;
 
 import com.ecommerce.entity.entity.UserEntity;
 import com.ecommerce.entity.responseDto.TokenClaims;
-import com.ecommerce.repository.repository.UserRepository;
+import com.ecommerce.repository.jpaRepository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;

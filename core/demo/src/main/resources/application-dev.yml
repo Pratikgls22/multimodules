@@ -1,0 +1,40 @@
+spring:
+  datasource:
+    url: jdbc:mysql://localhost:3306/react-security
+    username: root
+    password: root
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+  jpa:
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQL8Dialect
+        format_sql: true
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+
+#  elasticsearch:
+#    data:
+#      elasticsearch:
+#        client:
+#          reactive:
+#            endpoints: http://localhost:9202
+#            username: elastic
+#            password: elastic
+#
+  elasticsearch:
+    username: elastic
+    password: elastic
+    uris: http://localhost:9202
+
+
+server:
+  port: 9093
+
+#
+#  mvc:
+#    pathmatch:
+#      matching-strategy: ant_path_matcher
+
+

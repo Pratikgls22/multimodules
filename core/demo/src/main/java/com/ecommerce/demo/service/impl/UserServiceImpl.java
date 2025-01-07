@@ -3,18 +3,15 @@ package com.ecommerce.demo.service.impl;
 
 import com.ecommerce.demo.service.UserService;
 import com.ecommerce.demo.utill.Utilities;
-import com.ecommerce.entity.entity.RoleEntity;
-import com.ecommerce.entity.entity.UserDetailsEntity;
-import com.ecommerce.entity.entity.UserEntity;
-import com.ecommerce.entity.entity.UserRoleMappingEntity;
+import com.ecommerce.entity.entity.*;
 import com.ecommerce.entity.projection.GetAllUserDetails;
 import com.ecommerce.entity.requestDto.RegisterUserDTO;
 import com.ecommerce.entity.requestDto.UpdateUserDTO;
 import com.ecommerce.entity.responseDto.UserResponseDTO;
-import com.ecommerce.repository.repository.RoleRepository;
-import com.ecommerce.repository.repository.UserDetailsRepository;
-import com.ecommerce.repository.repository.UserRepository;
-import com.ecommerce.repository.repository.UserRoleMappingRepository;
+import com.ecommerce.repository.jpaRepository.RoleRepository;
+import com.ecommerce.repository.jpaRepository.UserDetailsRepository;
+import com.ecommerce.repository.jpaRepository.UserRepository;
+import com.ecommerce.repository.jpaRepository.UserRoleMappingRepository;
 import com.ecommerce.utility.enums.ExceptionEnum;
 import com.ecommerce.utility.exception.CustomException;
 import lombok.RequiredArgsConstructor;
@@ -41,6 +38,33 @@ public class UserServiceImpl implements UserService {
     private final PasswordEncoder passwordEncoder;
     private final RoleRepository roleRepository;
     private final Utilities utilities;
+
+    private static UserDetailsEntity getUserDetailsEntity(RegisterUserDTO registerUserDTO, UserEntity saveUserEntity, UserEntity currentUser) {
+        UserDetailsEntity userDetailsEntity = new UserDetailsEntity();
+        userDetailsEntity.setDob(registerUserDTO.getDob());
+        userDetailsEntity.setAddress(registerUserDTO.getAddress());
+        userDetailsEntity.setFirstName(registerUserDTO.getFirstName());
+        userDetailsEntity.setLastName(registerUserDTO.getLastName());
+        userDetailsEntity.setGender(registerUserDTO.getGender());
+        userDetailsEntity.setUserId(saveUserEntity);
+        userDetailsEntity.setCreatedBy(currentUser);
+        userDetailsEntity.setUpdatedBy(currentUser);
+        return userDetailsEntity;
+    }
+
+    private static UserResponseDTO getUserResponseDTO(UserEntity currentUser, UserDetailsEntity currentUserDetails) {
+        UserResponseDTO userResponseDTO = new UserResponseDTO();
+        userResponseDTO.setUserId(currentUser.getId());
+        userResponseDTO.setEmail(currentUser.getEmail());
+        userResponseDTO.setUserName(currentUser.getUserName());
+        userResponseDTO.setAddress(currentUserDetails.getAddress());
+        userResponseDTO.setDateOfBirth(currentUserDetails.getDob());
+        userResponseDTO.setFirstName(currentUserDetails.getFirstName());
+        userResponseDTO.setLastName(currentUserDetails.getLastName());
+        userResponseDTO.setGender(currentUserDetails.getGender());
+        userResponseDTO.setIsActive(currentUser.isActive());
+        return userResponseDTO;
+    }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
@@ -83,6 +107,7 @@ public class UserServiceImpl implements UserService {
             log.info("Exception Catch at Adding User At Database in UserServiceImpl::::{}", HttpStatus.BAD_REQUEST);
             throw new CustomException(e.getMessage(), e.getHttpStatus());
         }
+
     }
 
     @Override
@@ -240,31 +265,4 @@ public class UserServiceImpl implements UserService {
         System.out.println("primary logic");
     }
 
-
-    private static UserDetailsEntity getUserDetailsEntity(RegisterUserDTO registerUserDTO, UserEntity saveUserEntity, UserEntity currentUser) {
-        UserDetailsEntity userDetailsEntity = new UserDetailsEntity();
-        userDetailsEntity.setDob(registerUserDTO.getDob());
-        userDetailsEntity.setAddress(registerUserDTO.getAddress());
-        userDetailsEntity.setFirstName(registerUserDTO.getFirstName());
-        userDetailsEntity.setLastName(registerUserDTO.getLastName());
-        userDetailsEntity.setGender(registerUserDTO.getGender());
-        userDetailsEntity.setUserId(saveUserEntity);
-        userDetailsEntity.setCreatedBy(currentUser);
-        userDetailsEntity.setUpdatedBy(currentUser);
-        return userDetailsEntity;
-    }
-
-    private static UserResponseDTO getUserResponseDTO(UserEntity currentUser, UserDetailsEntity currentUserDetails) {
-        UserResponseDTO userResponseDTO = new UserResponseDTO();
-        userResponseDTO.setUserId(currentUser.getId());
-        userResponseDTO.setEmail(currentUser.getEmail());
-        userResponseDTO.setUserName(currentUser.getUserName());
-        userResponseDTO.setAddress(currentUserDetails.getAddress());
-        userResponseDTO.setDateOfBirth(currentUserDetails.getDob());
-        userResponseDTO.setFirstName(currentUserDetails.getFirstName());
-        userResponseDTO.setLastName(currentUserDetails.getLastName());
-        userResponseDTO.setGender(currentUserDetails.getGender());
-        userResponseDTO.setIsActive(currentUser.isActive());
-        return userResponseDTO;
-    }
 }

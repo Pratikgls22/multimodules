@@ -11,6 +11,7 @@ public interface ProductProjection {
      String getInternalStorage();
      String getCamera();
      String getBattery();
+     String getImage();
      String getOperatingSystem();
      String getPrice();
      Status getStatus();
