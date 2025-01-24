@@ -1,0 +1,18 @@
+{
+  "properties": [
+    {
+      "name": "spring.data.elasticsearch.uris",
+      "type": "java.lang.String",
+      "description": "Description for spring.data.elasticsearch.uris."
+    },
+    {
+      "name": "spring.data.elasticsearch.username",
+      "type": "java.lang.String",
+      "description": "Description for spring.data.elasticsearch.username."
+    },
+    {
+      "name": "spring.data.elasticsearch.password",
+      "type": "java.lang.String",
+      "description": "Description for spring.data.elasticsearch.password."
+    }
+  ] }
