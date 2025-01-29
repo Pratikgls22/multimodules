@@ -22,8 +22,7 @@ public class JobElasticEntity {
     private String keySkills;
     private String roleCategory;
     private String functionalArea;
-    private String industryJob;
+    private String industry;
     private String jobTitle;
-
 
 }

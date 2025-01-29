@@ -3,7 +3,7 @@ package com.elasticsearch.jobportal.service.impl;
 import com.elasticsearch.jobportal.elasticEntity.JobElasticEntity;
 import com.elasticsearch.jobportal.elasticRepository.JobElasticRepository;
 import com.elasticsearch.jobportal.entity.JobEntity;
-import com.elasticsearch.jobportal.repository.JobRepository;
+import com.elasticsearch.jobportal.repository.JobEntityRepository;
 import com.elasticsearch.jobportal.service.JobService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -26,7 +26,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class JobServiceImpl implements JobService {
 
-    private final JobRepository jobRepository;
+    private final JobEntityRepository jobEntityRepository;
     private final JobElasticRepository jobElasticRepository;
     private final RestTemplate restTemplate;
     private final ObjectMapper objectMapper;
@@ -52,16 +52,16 @@ public class JobServiceImpl implements JobService {
                     String keySkills = row.getCell(3).getStringCellValue();
                     String roleCategory = row.getCell(4).getStringCellValue();
                     String functionalArea = row.getCell(5).getStringCellValue();
-                    String industryJob = row.getCell(6).getStringCellValue();
+                    String industry = row.getCell(6).getStringCellValue();
                     String jobTitle = row.getCell(7).getStringCellValue();
 
-                    JobEntity jobEntity = new JobEntity(jobSalary, jobExperienceRequired, keySkills, roleCategory, functionalArea, industryJob, jobTitle);
+                    JobEntity jobEntity = new JobEntity(jobSalary, jobExperienceRequired, keySkills, roleCategory, functionalArea, industry, jobTitle);
                     jobEntity.setJobSalary(jobSalary);
                     jobEntity.setJobExperienceRequired(jobExperienceRequired);
                     jobEntity.setKeySkills(keySkills);
                     jobEntity.setRoleCategory(roleCategory);
                     jobEntity.setFunctionalArea(functionalArea);
-                    jobEntity.setIndustryJob(industryJob);
+                    jobEntity.setIndustry(industry);
                     jobEntity.setJobTitle(jobTitle);
                     jobEntities.add(jobEntity);
 
@@ -71,7 +71,7 @@ public class JobServiceImpl implements JobService {
                     jobElasticEntity.setKeySkills(keySkills);
                     jobElasticEntity.setRoleCategory(roleCategory);
                     jobElasticEntity.setFunctionalArea(functionalArea);
-                    jobElasticEntity.setIndustryJob(industryJob);
+                    jobElasticEntity.setIndustry(industry);
                     jobElasticEntity.setJobTitle(jobTitle);
                     jobElasticEntities.add(jobElasticEntity);
                 }
@@ -90,9 +90,11 @@ public class JobServiceImpl implements JobService {
     }
 
     @Override
-    public JsonNode getEntities(String name) {
+    public JsonNode getEntities(String name, int from, int size) {
         String url = UriComponentsBuilder.fromUriString(ELASTICSEARCH_URL)
                 .queryParam("q", name)
+                .queryParam("from", from)
+                .queryParam("size", size)
                 .toUriString();
 
         String response = restTemplate.getForObject(url, String.class);
@@ -110,6 +112,8 @@ public class JobServiceImpl implements JobService {
 
         return jobData;
     }
+
+
 }
 
 

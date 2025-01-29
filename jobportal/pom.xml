@@ -60,6 +60,36 @@
 			<scope>test</scope>
 		</dependency>
 
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-batch</artifactId>
+		</dependency>
+
+<!--		&lt;!&ndash; Spring Batch dependencies &ndash;&gt;-->
+<!--		<dependency>-->
+<!--			<groupId>org.springframework.batch</groupId>-->
+<!--			<artifactId>spring-batch-core</artifactId>-->
+<!--			<version>5.0.0</version> &lt;!&ndash; Ensure this is the correct version for Spring Batch 5 &ndash;&gt;-->
+<!--		</dependency>-->
+<!--		<dependency>-->
+<!--			<groupId>org.springframework.batch</groupId>-->
+<!--			<artifactId>spring-batch-infrastructure</artifactId>-->
+<!--			<version>5.0.0</version>-->
+<!--		</dependency>-->
+
+<!--		for with rest Template get data-->
+<!--		<dependency>-->
+<!--			<groupId>org.elasticsearch.client</groupId>-->
+<!--			<artifactId>elasticsearch-rest-high-level-client</artifactId>-->
+<!--			<version>7.17.3</version>-->
+<!--		</dependency>-->
+
+<!--		<dependency>-->
+<!--			<groupId>co.elastic.clients</groupId>-->
+<!--			<artifactId>elasticsearch-java</artifactId>-->
+<!--			<version>8.15.5</version> &lt;!&ndash; Ensure the version matches your Elasticsearch server version &ndash;&gt;-->
+<!--		</dependency>-->
+
 		<!--		dependency for excel file -->
 		<dependency>
 			<groupId>org.apache.poi</groupId>
@@ -95,8 +125,13 @@
 					<useFile>false</useFile>
 				</configuration>
 			</plugin>
-
 		</plugins>
+
+		<resources>
+			<resource>
+				<directory>src/main/resources</directory>
+			</resource>
+		</resources>
 	</build>
 
 </project>

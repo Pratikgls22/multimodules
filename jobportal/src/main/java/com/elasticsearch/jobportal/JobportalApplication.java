@@ -1,5 +1,7 @@
 package com.elasticsearch.jobportal;
 
+import org.springframework.batch.core.configuration.annotation.EnableBatchProcessing;
+import org.springframework.batch.core.job.builder.JobBuilder;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
@@ -16,6 +18,7 @@ public class JobportalApplication {
 	public RestTemplate restTemplate(){
 		return new RestTemplate();
 	}
+
 	public static void main(String[] args) {
 		SpringApplication.run(JobportalApplication.class, args);
 	}
